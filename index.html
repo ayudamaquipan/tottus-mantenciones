@@ -24,7 +24,7 @@
             color: var(--text-main);
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Evita el scroll doble en la página completa */
+            overflow: hidden; 
         }
 
         header {
@@ -61,7 +61,7 @@
         .control-group { display: flex; flex-direction: column; gap: 6px; }
         .control-group label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
 
-        select, input[type="file"] {
+        select, input[type="file"], .search-input {
             padding: 8px 12px;
             border-radius: 6px;
             border: 1px solid var(--border);
@@ -69,6 +69,18 @@
             font-size: 0.9rem;
             background-color: var(--background);
             color: var(--text-main);
+            transition: border-color 0.2s;
+        }
+
+        .search-input {
+            min-width: 250px;
+            background-color: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
 
         select {
@@ -84,19 +96,16 @@
         }
         .btn-clear:hover { background-color: #dc2626; }
 
-        /* Contenedor de tabla con altura máxima y scroll fijo */
         .table-container {
             background-color: var(--surface);
             border-radius: 10px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--border);
-            /* El alto máximo asegura que el scroll horizontal se vea sin bajar toda la página */
             max-height: calc(100vh - 240px); 
-            overflow-y: auto; /* Scroll vertical interno */
-            overflow-x: auto; /* Scroll horizontal interno */
+            overflow-y: auto; 
+            overflow-x: auto; 
         }
 
-        /* Diseño de la barra de desplazamiento */
         .table-container::-webkit-scrollbar { width: 10px; height: 12px; }
         .table-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
         .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 2px solid #f1f5f9; }
@@ -109,7 +118,6 @@
             font-weight: 600; font-size: 0.8rem; text-transform: uppercase;
             padding: 12px; border-bottom: 2px solid var(--border);
             position: sticky; top: 0; z-index: 10; white-space: nowrap;
-            /* Sombra sutil para el encabezado pegajoso */
             box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); 
         }
 
@@ -179,15 +187,20 @@
 <div class="container">
     <div class="control-panel">
         <div class="control-group">
-            <label id="fileLabel">1. Archivo de Planificación (.xlsx)</label>
+            <label id="fileLabel">1. Archivo de Planificación</label>
             <input type="file" id="excelFileInput" accept=".xlsx, .xls">
         </div>
 
         <div class="control-group">
-            <label for="monthSelect">2. Seleccionar Mes Operativo</label>
+            <label for="monthSelect">2. Mes Operativo</label>
             <select id="monthSelect">
                 <option value="">-- Sin datos --</option>
             </select>
+        </div>
+
+        <div class="control-group">
+            <label for="searchInput">3. Buscar en la tabla</label>
+            <input type="text" id="searchInput" class="search-input" placeholder="Buscar local, REQ, código o Zonal..." oninput="window.aplicarFiltroBuscador()">
         </div>
 
         <button class="btn-clear" onclick="borrarTodo()">Restablecer Panel</button>
@@ -231,8 +244,8 @@
         </div>
 
         <div class="modal-toggles">
-            <div class="toggle-wrap">Cot. Enviadas: <label class="toggle-switch"><input type="checkbox" id="modCotEnv"><span class="slider"></span></label></div>
             <div class="toggle-wrap">Realizado: <label class="toggle-switch"><input type="checkbox" id="modRealizado"><span class="slider"></span></label></div>
+            <div class="toggle-wrap">Cot. Enviadas: <label class="toggle-switch"><input type="checkbox" id="modCotEnv"><span class="slider"></span></label></div>
             <div class="toggle-wrap">Cierre: <label class="toggle-switch"><input type="checkbox" id="modCierre"><span class="slider"></span></label></div>
         </div>
 
@@ -278,6 +291,26 @@
     let datosGlobales = [];
     let unsubsribeEstados = null;
 
+    window.aplicarFiltroBuscador = function() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#tableBody tr');
+
+        rows.forEach(row => {
+            if (row.querySelector('.empty-state')) return;
+
+            const textContent = row.textContent.toLowerCase();
+            const textareas = row.querySelectorAll('textarea');
+            let inputTexts = '';
+            textareas.forEach(ta => inputTexts += ta.value.toLowerCase() + ' ');
+
+            if (textContent.includes(searchTerm) || inputTexts.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
     window.fichaContext = { codTienda: null, mes: null };
 
     window.abrirFicha = function(codTienda, fecha, tienda, zonal, mes) {
@@ -300,8 +333,8 @@
         document.getElementById('modCot').value = inCot ? inCot.value : '';
         document.getElementById('modObs').value = inObs ? inObs.value : '';
         
-        document.getElementById('modCotEnv').checked = chkCotEnv ? chkCotEnv.checked : false;
         document.getElementById('modRealizado').checked = chkRealizado ? chkRealizado.checked : false;
+        document.getElementById('modCotEnv').checked = chkCotEnv ? chkCotEnv.checked : false;
         document.getElementById('modCierre').checked = chkCierre ? chkCierre.checked : false;
 
         document.getElementById('fichaModal').style.display = 'flex';
@@ -317,8 +350,8 @@
         const nReq = document.getElementById('modReq').value;
         const nCot = document.getElementById('modCot').value;
         const nObs = document.getElementById('modObs').value;
-        const bCotEnv = document.getElementById('modCotEnv').checked;
         const bRealizado = document.getElementById('modRealizado').checked;
+        const bCotEnv = document.getElementById('modCotEnv').checked;
         const bCierre = document.getElementById('modCierre').checked;
 
         try {
@@ -327,8 +360,8 @@
                 NumReq: nReq,
                 NumCot: nCot,
                 Observaciones: nObs,
-                CotEnviadas: bCotEnv,
                 Realizado: bRealizado,
+                CotEnviadas: bCotEnv,
                 Cierre: bCierre
             }, { merge: true });
             
@@ -415,6 +448,8 @@
         const tableBody = document.getElementById('tableBody');
         const mesSeleccionado = document.getElementById('monthSelect').value;
         
+        document.getElementById('searchInput').value = '';
+
         if (datosGlobales.length === 0 || !mesSeleccionado) {
             tableBody.innerHTML = '<tr><td colspan="11" class="empty-state">Seleccione un mes o cargue un archivo válido.</td></tr>';
             if (unsubsribeEstados) unsubsribeEstados(); 
@@ -423,7 +458,6 @@
 
         let datosFiltrados = datosGlobales.filter(row => row.MES === mesSeleccionado && row.TIENDA);
         
-        // --- RESTAURADO: ORDENAMIENTO DE FECHAS CRONOLÓGICO ---
         datosFiltrados.sort((a, b) => {
             const parseDate = (fechaStr) => {
                 if (!fechaStr) return 0;
@@ -459,6 +493,7 @@
             const tiendaStr = escaparTextos(row['TIENDA']);
             const zonalStr = escaparTextos(row['JEFE ZONAL']);
 
+            // Aquí invertimos el orden de las etiquetas HTML de los interruptores
             tr.innerHTML = `
                 <td class="centrado">
                     <button class="btn-ficha" onclick="window.abrirFicha('${codTienda}', '${fechaStr}', '${tiendaStr}', '${zonalStr}', '${mesSeleccionado}')">📝 Ficha</button>
@@ -478,13 +513,13 @@
                 </td>
                 <td class="centrado">
                     <label class="toggle-switch">
-                        <input type="checkbox" id="cotEnv_${codTienda}" onchange="window.guardarEstado(this, 'CotEnviadas', '${codTienda}', '${mesSeleccionado}')">
+                        <input type="checkbox" id="realizado_${codTienda}" onchange="window.guardarEstado(this, 'Realizado', '${codTienda}', '${mesSeleccionado}')">
                         <span class="slider"></span>
                     </label>
                 </td>
                 <td class="centrado">
                     <label class="toggle-switch">
-                        <input type="checkbox" id="realizado_${codTienda}" onchange="window.guardarEstado(this, 'Realizado', '${codTienda}', '${mesSeleccionado}')">
+                        <input type="checkbox" id="cotEnv_${codTienda}" onchange="window.guardarEstado(this, 'CotEnviadas', '${codTienda}', '${mesSeleccionado}')">
                         <span class="slider"></span>
                     </label>
                 </td>
@@ -507,21 +542,22 @@
                 const codTienda = doc.id;
                 const datosNube = doc.data();
 
-                const chkCotEnv = document.getElementById(`cotEnv_${codTienda}`);
                 const chkRealizado = document.getElementById(`realizado_${codTienda}`);
+                const chkCotEnv = document.getElementById(`cotEnv_${codTienda}`);
                 const chkCierre = document.getElementById(`cierre_${codTienda}`);
                 const inputReq = document.getElementById(`req_${codTienda}`);
                 const inputCot = document.getElementById(`cot_${codTienda}`);
                 const inputObs = document.getElementById(`obs_${codTienda}`); 
 
-                if (chkCotEnv) chkCotEnv.checked = !!datosNube.CotEnviadas;
                 if (chkRealizado) chkRealizado.checked = !!datosNube.Realizado;
+                if (chkCotEnv) chkCotEnv.checked = !!datosNube.CotEnviadas;
                 if (chkCierre) chkCierre.checked = !!datosNube.Cierre;
 
                 if (inputReq && document.activeElement !== inputReq) inputReq.value = datosNube.NumReq || '';
                 if (inputCot && document.activeElement !== inputCot) inputCot.value = datosNube.NumCot || '';
                 if (inputObs && document.activeElement !== inputObs) inputObs.value = datosNube.Observaciones || '';
             });
+            window.aplicarFiltroBuscador();
         });
     }
 
@@ -552,6 +588,7 @@
                 datosGlobales = [];
                 document.getElementById('excelFileInput').value = '';
                 document.getElementById('monthSelect').innerHTML = '<option value="">-- Sin datos --</option>';
+                document.getElementById('searchInput').value = '';
                 procesarDatos();
             } catch(error) {
                 alert("No se pudo limpiar la base de datos.");
