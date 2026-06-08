@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Supervisión - Mantenimiento Preventivo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a; 
+            --secondary: #3b82f6; 
+            --success: #10b981; 
+            --background: #f8fafc; 
+            --surface: #ffffff; 
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        
+        header p {
+            margin: 5px 0 0 0;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+
+        .container {
+            max-width: 1400px; 
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .control-panel {
+            background-color: var(--surface);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: flex-end;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select, input[type="file"] {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            background-color: var(--background);
+            color: var(--text-main);
+            transition: border-color 0.2s;
+        }
+
+        select {
+            cursor: pointer;
+            min-width: 200px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+        }
+
+        select:focus, input[type="file"]:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-clear {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.95rem;
+            margin-left: auto;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn-clear:hover { background-color: #dc2626; }
+        .btn-clear:active { transform: translateY(1px); }
+
+        .table-container {
+            background-color: var(--surface);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--background);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 16px;
+            border-bottom: 2px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background-color: #f1f5f9;
+        }
+
+        .centrado { text-align: center; }
+        
+        .fw-bold { font-weight: 600; color: var(--primary); }
+
+        /* Inputs Manuales dentro de las Celdas (Ahora más anchos) */
+        .input-manual {
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            width: 140px; /* Aumentado para permitir múltiples valores separados por comas */
+            text-align: center;
+            box-sizing: border-box;
+            background-color: #fafafa;
+            transition: all 0.2s;
+        }
+
+        .input-manual:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #cbd5e1;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider { background-color: var(--success); }
+        input:focus + .slider { box-shadow: 0 0 1px var(--success); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .empty-state {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Supervisión Técnica Nacional</h1>
+    <p>Panel de Control de Servicios y Mantenimientos en Terreno</p>
+</header>
+
+<div class="container">
+    <div class="control-panel">
+        <div class="control-group">
+            <label id="fileLabel">1. Archivo de Planificación (.xlsx)</label>
+            <input type="file" id="excelFileInput" accept=".xlsx, .xls">
+        </div>
+
+        <div class="control-group">
+            <label for="monthSelect">2. Seleccionar Mes Operativo</label>
+            <select id="monthSelect">
+                <option value="">-- Sin datos --</option>
+            </select>
+        </div>
+
+        <button class="btn-clear" onclick="borrarTodo()">Restablecer Panel</button>
+    </div>
+
+    <div class="table-container">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Fecha Inicio</th>
+                    <th>Cód. Tienda</th>
+                    <th>Tienda</th>
+                    <th>Responsable Zonal</th>
+                    <th class="centrado">N° REQ</th>
+                    <th class="centrado">N° Cotización(es)</th>
+                    <th class="centrado">Realizado</th>
+                    <th class="centrado">Cierre</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr>
+                    <td colspan="8" class="empty-state">
+                        Seleccione un mes o cargue su archivo Excel de planificación para visualizar a su equipo.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    // REEMPLAZA ESTO CON TU CONFIGURACIÓN DE FIREBASE
+    const firebaseConfig = {
+  apiKey: "AIzaSyCzdsA0bqZaIds-Uz7sQgIdm6qoyppesUI",
+  authDomain: "tottus-servicios.firebaseapp.com",
+  projectId: "tottus-servicios",
+  storageBucket: "tottus-servicios.firebasestorage.app",
+  messagingSenderId: "698833510541",
+  appId: "1:698833510541:web:f8d51d2f9d7bdc7291c2c4"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let datosGlobales = [];
+
+    window.onload = async function() {
+        document.getElementById('fileLabel').innerHTML = "1. Conectando a Firebase...";
+        try {
+            const docRef = doc(db, "sistema", "datosGlobales");
+            const docSnap = await getDoc(docRef);
+
+            if (docSnap.exists()) {
+                datosGlobales = JSON.parse(docSnap.data().excelJson || "[]");
+                document.getElementById('fileLabel').innerHTML = "1. Archivo Activo en Nube";
+                actualizarSelectorMeses(datosGlobales);
+                
+                const mesDoc = await getDoc(doc(db, "sistema", "ultimoMes"));
+                if (mesDoc.exists()) {
+                    document.getElementById('monthSelect').value = mesDoc.data().mes;
+                }
+                await procesarDatos();
+            } else {
+                document.getElementById('fileLabel').innerHTML = "1. Archivo de Planificación (.xlsx)";
+            }
+        } catch (error) {
+            console.error("Error al cargar de Firebase:", error);
+            document.getElementById('fileLabel').innerHTML = "1. Error de conexión";
+        }
+    };
+
+    document.getElementById('excelFileInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        document.getElementById('fileLabel').innerHTML = "Subiendo a la nube...";
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonResult = XLSX.utils.sheet_to_json(worksheet, { raw: false, range: 2 });
+            
+            datosGlobales = jsonResult;
+            
+            try {
+                await setDoc(doc(db, "sistema", "datosGlobales"), { excelJson: JSON.stringify(jsonResult) });
+                document.getElementById('fileLabel').innerHTML = "1. Archivo Cargado con Éxito";
+                actualizarSelectorMeses(datosGlobales);
+                await procesarDatos();
+            } catch (error) {
+                console.error("Error al guardar Excel:", error);
+                alert("Error al subir el archivo.");
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    document.getElementById('monthSelect').addEventListener('change', async function() {
+        const nuevoMes = this.value;
+        try {
+            await setDoc(doc(db, "sistema", "ultimoMes"), { mes: nuevoMes });
+            await procesarDatos();
+        } catch(error) {
+            console.error("Error al guardar el mes:", error);
+        }
+    });
+
+    function actualizarSelectorMeses(data) {
+        const monthSelect = document.getElementById('monthSelect');
+        const mesesUnicos = [...new Set(data.map(row => row.MES).filter(Boolean))];
+        
+        monthSelect.innerHTML = '';
+        if (mesesUnicos.length === 0) {
+            monthSelect.innerHTML = '<option value="">Sin meses</option>';
+            return;
+        }
+
+        mesesUnicos.forEach(mes => {
+            const option = document.createElement('option');
+            option.value = mes;
+            option.textContent = mes;
+            monthSelect.appendChild(option);
+        });
+    }
+
+    async function procesarDatos() {
+        const tableBody = document.getElementById('tableBody');
+        const mesSeleccionado = document.getElementById('monthSelect').value;
+        
+        tableBody.innerHTML = '<tr><td colspan="8" class="empty-state">Cargando datos de la nube...</td></tr>'; 
+
+        if (datosGlobales.length === 0 || !mesSeleccionado) {
+            tableBody.innerHTML = '<tr><td colspan="8" class="empty-state">Seleccione un mes o cargue un archivo válido.</td></tr>';
+            return;
+        }
+
+        let datosFiltrados = datosGlobales.filter(row => row.MES === mesSeleccionado && row.TIENDA);
+
+        datosFiltrados.sort((a, b) => {
+            const parseDate = (fechaStr) => {
+                if (!fechaStr) return 0;
+                if (typeof fechaStr === 'number') return fechaStr;
+                let str = fechaStr.toString().trim();
+                let partes = str.replace(/\//g, '-').split('-');
+                if (partes.length === 3) {
+                    if (partes[0].length <= 2 && partes[2].length === 4) {
+                        return new Date(`${partes[2]}-${partes[1]}-${partes[0]}`).getTime();
+                    } else if (partes[0].length === 4) {
+                        return new Date(`${partes[0]}-${partes[1]}-${partes[2]}`).getTime();
+                    }
+                }
+                return new Date(str).getTime() || 0;
+            };
+            return parseDate(a['FECHA INICIO']) - parseDate(b['FECHA INICIO']);
+        });
+
+        if (datosFiltrados.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="8" class="empty-state" style="color: #ef4444;">No se encontraron registros para este mes.</td></tr>';
+            return;
+        }
+
+        let estadosDb = {};
+        try {
+            const estadosSnap = await getDocs(collection(db, `estados_${mesSeleccionado}`));
+            estadosSnap.forEach(doc => {
+                estadosDb[doc.id] = doc.data();
+            });
+        } catch(error) {
+            console.error("Error leyendo estados:", error);
+        }
+
+        tableBody.innerHTML = '';
+
+        datosFiltrados.forEach((row, index) => {
+            const tr = document.createElement('tr');
+            const codTienda = row['CÓDIGO TIENDA'] || '';
+            
+            const isRealizado = estadosDb[codTienda]?.Realizado ? 'checked' : '';
+            const isCierre = estadosDb[codTienda]?.Cierre ? 'checked' : '';
+            const valueReq = estadosDb[codTienda]?.NumReq || '';
+            const valueCot = estadosDb[codTienda]?.NumCot || '';
+
+            tr.innerHTML = `
+                <td class="fw-bold">${row['FECHA INICIO'] || ''}</td>
+                <td>${codTienda}</td>
+                <td>${row['TIENDA'] || ''}</td>
+                <td>${row['JEFE ZONAL'] || ''}</td>
+                <td class="centrado">
+                    <input type="text" class="input-manual" placeholder="Ej: R-001" value="${valueReq}" onchange="window.guardarCampoManual(this, 'NumReq', '${codTienda}', '${mesSeleccionado}')">
+                </td>
+                <td class="centrado">
+                    <input type="text" class="input-manual" placeholder="Ej: 1234, 5678" value="${valueCot}" onchange="window.guardarCampoManual(this, 'NumCot', '${codTienda}', '${mesSeleccionado}')">
+                </td>
+                <td class="centrado">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="realizado_${index}" ${isRealizado} onchange="window.guardarEstado(this, 'Realizado', '${codTienda}', '${mesSeleccionado}')">
+                        <span class="slider"></span>
+                    </label>
+                </td>
+                <td class="centrado">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="cierre_${index}" ${isCierre} onchange="window.guardarEstado(this, 'Cierre', '${codTienda}', '${mesSeleccionado}')">
+                        <span class="slider"></span>
+                    </label>
+                </td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    }
+
+    window.guardarEstado = async function(checkbox, tipoAccion, codigoTienda, mes) {
+        try {
+            const docRef = doc(db, `estados_${mes}`, codigoTienda);
+            await setDoc(docRef, {
+                [tipoAccion]: checkbox.checked
+            }, { merge: true });
+        } catch(error) {
+            console.error("Error guardando estado:", error);
+            checkbox.checked = !checkbox.checked;
+            alert("Hubo un error de conexión al guardar el cambio.");
+        }
+    }
+
+    window.guardarCampoManual = async function(input, tipoAccion, codigoTienda, mes) {
+        try {
+            const docRef = doc(db, `estados_${mes}`, codigoTienda);
+            await setDoc(docRef, {
+                [tipoAccion]: input.value
+            }, { merge: true });
+        } catch(error) {
+            console.error("Error guardando campo manual:", error);
+            alert("Error al sincronizar el campo con la nube.");
+        }
+    }
+
+    window.borrarTodo = async function() {
+        if (confirm("ATENCIÓN: ¿Está seguro que desea limpiar el archivo general de Firebase? Esto afectará a todos los usuarios.")) {
+            try {
+                await deleteDoc(doc(db, "sistema", "datosGlobales"));
+                await deleteDoc(doc(db, "sistema", "ultimoMes"));
+                
+                datosGlobales = [];
+                document.getElementById('excelFileInput').value = '';
+                document.getElementById('fileLabel').innerHTML = "1. Archivo de Planificación (.xlsx)";
+                document.getElementById('monthSelect').innerHTML = '<option value="">-- Sin datos --</option>';
+                procesarDatos();
+            } catch(error) {
+                console.error("Error al borrar datos:", error);
+                alert("No se pudo limpiar la base de datos.");
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
