@@ -164,14 +164,13 @@
         
         .fw-bold { font-weight: 600; color: var(--primary); }
 
-        /* Inputs Manuales dentro de las Celdas (Ahora más anchos) */
         .input-manual {
             padding: 6px 10px;
             border: 1px solid var(--border);
             border-radius: 6px;
             font-family: 'Inter', sans-serif;
             font-size: 0.9rem;
-            width: 140px; /* Aumentado para permitir múltiples valores separados por comas */
+            width: 140px; 
             text-align: center;
             box-sizing: border-box;
             background-color: #fafafa;
@@ -281,23 +280,25 @@
 </div>
 
 <script type="module">
+    // Importamos onSnapshot para la lectura en tiempo real
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
     // REEMPLAZA ESTO CON TU CONFIGURACIÓN DE FIREBASE
     const firebaseConfig = {
-  apiKey: "AIzaSyCzdsA0bqZaIds-Uz7sQgIdm6qoyppesUI",
-  authDomain: "tottus-servicios.firebaseapp.com",
-  projectId: "tottus-servicios",
-  storageBucket: "tottus-servicios.firebasestorage.app",
-  messagingSenderId: "698833510541",
-  appId: "1:698833510541:web:f8d51d2f9d7bdc7291c2c4"
-};
+        apiKey: "TU_API_KEY",
+        authDomain: "TU_PROYECTO.firebaseapp.com",
+        projectId: "TU_PROYECTO",
+        storageBucket: "TU_PROYECTO.appspot.com",
+        messagingSenderId: "TU_SENDER_ID",
+        appId: "TU_APP_ID"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
     let datosGlobales = [];
+    let unsubsribeEstados = null; // Variable para guardar la suscripción de tiempo real
 
     window.onload = async function() {
         document.getElementById('fileLabel').innerHTML = "1. Conectando a Firebase...";
@@ -384,10 +385,11 @@
         const tableBody = document.getElementById('tableBody');
         const mesSeleccionado = document.getElementById('monthSelect').value;
         
-        tableBody.innerHTML = '<tr><td colspan="8" class="empty-state">Cargando datos de la nube...</td></tr>'; 
+        tableBody.innerHTML = '<tr><td colspan="8" class="empty-state">Procesando estructura...</td></tr>'; 
 
         if (datosGlobales.length === 0 || !mesSeleccionado) {
             tableBody.innerHTML = '<tr><td colspan="8" class="empty-state">Seleccione un mes o cargue un archivo válido.</td></tr>';
+            if (unsubsribeEstados) { unsubsribeEstados(); } // Cortar escucha si no hay mes
             return;
         }
 
@@ -413,55 +415,77 @@
 
         if (datosFiltrados.length === 0) {
             tableBody.innerHTML = '<tr><td colspan="8" class="empty-state" style="color: #ef4444;">No se encontraron registros para este mes.</td></tr>';
+            if (unsubsribeEstados) { unsubsribeEstados(); }
             return;
         }
 
-        let estadosDb = {};
-        try {
-            const estadosSnap = await getDocs(collection(db, `estados_${mesSeleccionado}`));
-            estadosSnap.forEach(doc => {
-                estadosDb[doc.id] = doc.data();
-            });
-        } catch(error) {
-            console.error("Error leyendo estados:", error);
-        }
-
+        // 1. DIBUJAR LA TABLA BASE (Sin datos de Firebase todavía)
         tableBody.innerHTML = '';
-
-        datosFiltrados.forEach((row, index) => {
+        datosFiltrados.forEach((row) => {
             const tr = document.createElement('tr');
             const codTienda = row['CÓDIGO TIENDA'] || '';
             
-            const isRealizado = estadosDb[codTienda]?.Realizado ? 'checked' : '';
-            const isCierre = estadosDb[codTienda]?.Cierre ? 'checked' : '';
-            const valueReq = estadosDb[codTienda]?.NumReq || '';
-            const valueCot = estadosDb[codTienda]?.NumCot || '';
-
+            // Les asignamos un "id" único a cada campo para poder inyectar la info en tiempo real después
             tr.innerHTML = `
                 <td class="fw-bold">${row['FECHA INICIO'] || ''}</td>
                 <td>${codTienda}</td>
                 <td>${row['TIENDA'] || ''}</td>
                 <td>${row['JEFE ZONAL'] || ''}</td>
                 <td class="centrado">
-                    <input type="text" class="input-manual" placeholder="Ej: R-001" value="${valueReq}" onchange="window.guardarCampoManual(this, 'NumReq', '${codTienda}', '${mesSeleccionado}')">
+                    <input type="text" id="req_${codTienda}" class="input-manual" placeholder="Ej: R-001" onchange="window.guardarCampoManual(this, 'NumReq', '${codTienda}', '${mesSeleccionado}')">
                 </td>
                 <td class="centrado">
-                    <input type="text" class="input-manual" placeholder="Ej: 1234, 5678" value="${valueCot}" onchange="window.guardarCampoManual(this, 'NumCot', '${codTienda}', '${mesSeleccionado}')">
+                    <input type="text" id="cot_${codTienda}" class="input-manual" placeholder="Ej: 1234, 5678" onchange="window.guardarCampoManual(this, 'NumCot', '${codTienda}', '${mesSeleccionado}')">
                 </td>
                 <td class="centrado">
                     <label class="toggle-switch">
-                        <input type="checkbox" id="realizado_${index}" ${isRealizado} onchange="window.guardarEstado(this, 'Realizado', '${codTienda}', '${mesSeleccionado}')">
+                        <input type="checkbox" id="realizado_${codTienda}" onchange="window.guardarEstado(this, 'Realizado', '${codTienda}', '${mesSeleccionado}')">
                         <span class="slider"></span>
                     </label>
                 </td>
                 <td class="centrado">
                     <label class="toggle-switch">
-                        <input type="checkbox" id="cierre_${index}" ${isCierre} onchange="window.guardarEstado(this, 'Cierre', '${codTienda}', '${mesSeleccionado}')">
+                        <input type="checkbox" id="cierre_${codTienda}" onchange="window.guardarEstado(this, 'Cierre', '${codTienda}', '${mesSeleccionado}')">
                         <span class="slider"></span>
                     </label>
                 </td>
             `;
             tableBody.appendChild(tr);
+        });
+
+        // 2. ACTIVAR LA LECTURA EN TIEMPO REAL
+        if (unsubsribeEstados) {
+            unsubsribeEstados(); // Cortamos la escucha del mes anterior si es que la había
+        }
+
+        const coleccionRef = collection(db, `estados_${mesSeleccionado}`);
+        
+        // onSnapshot escucha los cambios 24/7 de manera instantánea
+        unsubsribeEstados = onSnapshot(coleccionRef, (snapshot) => {
+            snapshot.forEach(doc => {
+                const codTienda = doc.id;
+                const datosNube = doc.data();
+
+                // Buscar los elementos en la tabla
+                const chkRealizado = document.getElementById(`realizado_${codTienda}`);
+                const chkCierre = document.getElementById(`cierre_${codTienda}`);
+                const inputReq = document.getElementById(`req_${codTienda}`);
+                const inputCot = document.getElementById(`cot_${codTienda}`);
+
+                // Actualizar los interruptores (Checkboxes)
+                if (chkRealizado) chkRealizado.checked = !!datosNube.Realizado;
+                if (chkCierre) chkCierre.checked = !!datosNube.Cierre;
+
+                // Actualizar los inputs de texto SOLO si el usuario NO está escribiendo en ellos en este momento
+                if (inputReq && document.activeElement !== inputReq) {
+                    inputReq.value = datosNube.NumReq || '';
+                }
+                if (inputCot && document.activeElement !== inputCot) {
+                    inputCot.value = datosNube.NumCot || '';
+                }
+            });
+        }, (error) => {
+            console.error("Error en la conexión en tiempo real:", error);
         });
     }
 
@@ -493,6 +517,7 @@
     window.borrarTodo = async function() {
         if (confirm("ATENCIÓN: ¿Está seguro que desea limpiar el archivo general de Firebase? Esto afectará a todos los usuarios.")) {
             try {
+                if (unsubsribeEstados) unsubsribeEstados(); // Detener la escucha
                 await deleteDoc(doc(db, "sistema", "datosGlobales"));
                 await deleteDoc(doc(db, "sistema", "ultimoMes"));
                 
