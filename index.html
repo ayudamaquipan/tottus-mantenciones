@@ -24,210 +24,149 @@
             color: var(--text-main);
             margin: 0;
             padding: 0;
+            overflow: hidden; /* Evita el scroll doble en la página completa */
         }
 
         header {
             background-color: var(--primary);
             color: white;
-            padding: 20px 40px;
+            padding: 15px 30px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         
-        header h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-        }
-        
-        header p {
-            margin: 5px 0 0 0;
-            font-size: 0.9rem;
-            color: #cbd5e1;
-        }
+        header h1 { margin: 0; font-size: 1.3rem; font-weight: 600; letter-spacing: -0.5px; }
+        header p { margin: 4px 0 0 0; font-size: 0.85rem; color: #cbd5e1; }
 
         .container {
-            max-width: 1400px; 
-            margin: 30px auto;
-            padding: 0 20px;
+            width: 98%; 
+            max-width: none;
+            margin: 20px auto;
+            padding: 0 10px;
+            box-sizing: border-box;
         }
 
         .control-panel {
             background-color: var(--surface);
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            padding: 16px 24px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
             display: flex;
             flex-wrap: wrap;
-            gap: 30px;
+            gap: 20px;
             align-items: flex-end;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             border: 1px solid var(--border);
         }
 
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .control-group label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+        .control-group { display: flex; flex-direction: column; gap: 6px; }
+        .control-group label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
 
         select, input[type="file"] {
-            padding: 10px 14px;
-            border-radius: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
             border: 1px solid var(--border);
             font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             background-color: var(--background);
             color: var(--text-main);
-            transition: border-color 0.2s;
         }
 
         select {
-            cursor: pointer;
-            min-width: 200px;
-            appearance: none;
+            cursor: pointer; min-width: 180px; appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 14px center;
-        }
-
-        select:focus, input[type="file"]:focus {
-            outline: none;
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            background-repeat: no-repeat; background-position: right 10px center;
         }
 
         .btn-clear {
-            background-color: #ef4444;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.95rem;
-            margin-left: auto;
-            transition: background-color 0.2s, transform 0.1s;
+            background-color: #ef4444; color: white; border: none; padding: 8px 16px;
+            border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 0.9rem;
+            margin-left: auto; transition: 0.2s;
         }
-
         .btn-clear:hover { background-color: #dc2626; }
-        .btn-clear:active { transform: translateY(1px); }
 
+        /* Contenedor de tabla con altura máxima y scroll fijo */
         .table-container {
             background-color: var(--surface);
-            border-radius: 12px;
+            border-radius: 10px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--border);
-            overflow: hidden;
+            /* El alto máximo asegura que el scroll horizontal se vea sin bajar toda la página */
+            max-height: calc(100vh - 240px); 
+            overflow-y: auto; /* Scroll vertical interno */
+            overflow-x: auto; /* Scroll horizontal interno */
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
+        /* Diseño de la barra de desplazamiento */
+        .table-container::-webkit-scrollbar { width: 10px; height: 12px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 2px solid #f1f5f9; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 1250px; }
 
         th {
-            background-color: var(--background);
-            color: var(--text-muted);
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            padding: 16px;
-            border-bottom: 2px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            background-color: var(--background); color: var(--text-muted);
+            font-weight: 600; font-size: 0.8rem; text-transform: uppercase;
+            padding: 12px; border-bottom: 2px solid var(--border);
+            position: sticky; top: 0; z-index: 10; white-space: nowrap;
+            /* Sombra sutil para el encabezado pegajoso */
+            box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); 
         }
 
-        td {
-            padding: 16px;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.95rem;
-            vertical-align: middle;
-        }
-
-        tr:hover td {
-            background-color: #f1f5f9;
-        }
+        td { padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 0.85rem; vertical-align: middle; }
+        tr:hover td { background-color: #f1f5f9; }
 
         .centrado { text-align: center; }
-        
         .fw-bold { font-weight: 600; color: var(--primary); }
 
         .input-manual {
-            padding: 6px 10px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            width: 140px; 
-            text-align: center;
-            box-sizing: border-box;
-            background-color: #fafafa;
-            transition: all 0.2s;
+            padding: 6px; border: 1px solid var(--border); border-radius: 6px;
+            font-family: 'Inter', sans-serif; font-size: 0.85rem; width: 110px; 
+            min-height: 32px; box-sizing: border-box; background-color: #fafafa;
+            resize: vertical; transition: all 0.2s;
         }
+        .input-obs { width: 160px; }
+        .input-manual:focus { outline: none; border-color: var(--secondary); background-color: white; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
 
-        .input-manual:focus {
-            outline: none;
-            border-color: var(--secondary);
-            background-color: white;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        .btn-ficha {
+            background-color: #e2e8f0; color: var(--primary); border: none;
+            padding: 6px 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem;
+            cursor: pointer; transition: 0.2s; white-space: nowrap;
         }
+        .btn-ficha:hover { background-color: #cbd5e1; }
 
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 24px;
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #cbd5e1;
-            transition: .3s;
-            border-radius: 24px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .3s;
-            border-radius: 50%;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-
+        .toggle-switch { position: relative; display: inline-block; width: 36px; height: 20px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
         input:checked + .slider { background-color: var(--success); }
-        input:focus + .slider { box-shadow: 0 0 1px var(--success); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        input:checked + .slider:before { transform: translateX(16px); }
 
-        .empty-state {
-            padding: 40px;
-            text-align: center;
-            color: var(--text-muted);
-        }
+        /* --- MODAL FICHA COMPLETA --- */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+        .modal-content { background: var(--surface); padding: 24px; border-radius: 10px; width: 90%; max-width: 650px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; gap: 16px; animation: fadeIn 0.2s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .modal-header { font-size: 1.2rem; font-weight: 700; color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 8px;}
+        .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
+        .modal-grid div { font-size: 0.9rem; }
+        .modal-grid strong { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; display: block; margin-bottom: 2px; }
+
+        .modal-field { display: flex; flex-direction: column; gap: 6px; }
+        .modal-field label { font-weight: 600; color: var(--text-main); font-size: 0.9rem; }
+        .modal-textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.9rem; resize: vertical; background-color: #fafafa; box-sizing: border-box; }
+        
+        .modal-toggles { display: flex; gap: 15px; padding: 8px 0; flex-wrap: wrap; justify-content: space-between; }
+        .modal-toggles .toggle-wrap { display: flex; align-items: center; gap: 8px; font-weight: 600; color: var(--text-main); font-size: 0.85rem; }
+
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 5px; }
+        .btn-modal { padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; border: none; font-size: 0.9rem; transition: 0.2s; }
+        .btn-cancel { background: #e2e8f0; color: #475569; }
+        .btn-cancel:hover { background: #cbd5e1; }
+        .btn-save { background: var(--secondary); color: white; }
+        .btn-save:hover { background: #2563eb; }
+
+        .empty-state { padding: 40px; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -258,29 +197,68 @@
         <table id="dataTable">
             <thead>
                 <tr>
+                    <th>Acción</th>
                     <th>Fecha Inicio</th>
                     <th>Cód. Tienda</th>
                     <th>Tienda</th>
                     <th>Responsable Zonal</th>
                     <th class="centrado">N° REQ</th>
-                    <th class="centrado">N° Cotización(es)</th>
+                    <th class="centrado">N° Cotización</th>
+                    <th>Observaciones</th>
+                    <th class="centrado">Cot. Enviadas</th>
                     <th class="centrado">Realizado</th>
                     <th class="centrado">Cierre</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
                 <tr>
-                    <td colspan="8" class="empty-state">
-                        Seleccione un mes o cargue su archivo Excel de planificación para visualizar a su equipo.
-                    </td>
+                    <td colspan="11" class="empty-state">Seleccione un mes o cargue su archivo Excel para comenzar.</td>
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
 
+<div id="fichaModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">Ficha de Servicio - Local <span id="modCodTiendaTitulo"></span></div>
+        
+        <div class="modal-grid">
+            <div><strong>Fecha de Inicio</strong> <span id="modFecha"></span></div>
+            <div><strong>Nombre Tienda</strong> <span id="modTienda"></span></div>
+            <div><strong>Responsable Zonal</strong> <span id="modZonal"></span></div>
+            <div><strong>Mes Operativo</strong> <span id="modMes"></span></div>
+        </div>
+
+        <div class="modal-toggles">
+            <div class="toggle-wrap">Cot. Enviadas: <label class="toggle-switch"><input type="checkbox" id="modCotEnv"><span class="slider"></span></label></div>
+            <div class="toggle-wrap">Realizado: <label class="toggle-switch"><input type="checkbox" id="modRealizado"><span class="slider"></span></label></div>
+            <div class="toggle-wrap">Cierre: <label class="toggle-switch"><input type="checkbox" id="modCierre"><span class="slider"></span></label></div>
+        </div>
+
+        <div class="modal-field">
+            <label>N° REQ (Requerimiento)</label>
+            <textarea id="modReq" class="modal-textarea" rows="1" placeholder="Ej: R-001"></textarea>
+        </div>
+        
+        <div class="modal-field">
+            <label>N° Cotización(es)</label>
+            <textarea id="modCot" class="modal-textarea" rows="1" placeholder="Ej: 1234, 5678"></textarea>
+        </div>
+
+        <div class="modal-field">
+            <label>Observaciones del Servicio</label>
+            <textarea id="modObs" class="modal-textarea" rows="3" placeholder="Agrega notas o detalles importantes..."></textarea>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-modal btn-cancel" onclick="cerrarFicha()">Cancelar</button>
+            <button class="btn-modal btn-save" onclick="guardarFicha()">Guardar Cambios</button>
+        </div>
+    </div>
+</div>
+
 <script type="module">
-    // Importamos onSnapshot para la lectura en tiempo real
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getFirestore, doc, setDoc, getDoc, collection, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
@@ -298,7 +276,68 @@
     const db = getFirestore(app);
 
     let datosGlobales = [];
-    let unsubsribeEstados = null; // Variable para guardar la suscripción de tiempo real
+    let unsubsribeEstados = null;
+
+    window.fichaContext = { codTienda: null, mes: null };
+
+    window.abrirFicha = function(codTienda, fecha, tienda, zonal, mes) {
+        window.fichaContext = { codTienda, mes };
+
+        document.getElementById('modCodTiendaTitulo').innerText = codTienda;
+        document.getElementById('modFecha').innerText = fecha;
+        document.getElementById('modTienda').innerText = tienda;
+        document.getElementById('modZonal').innerText = zonal;
+        document.getElementById('modMes').innerText = mes;
+
+        const inReq = document.getElementById(`req_${codTienda}`);
+        const inCot = document.getElementById(`cot_${codTienda}`);
+        const inObs = document.getElementById(`obs_${codTienda}`);
+        const chkCotEnv = document.getElementById(`cotEnv_${codTienda}`);
+        const chkRealizado = document.getElementById(`realizado_${codTienda}`);
+        const chkCierre = document.getElementById(`cierre_${codTienda}`);
+
+        document.getElementById('modReq').value = inReq ? inReq.value : '';
+        document.getElementById('modCot').value = inCot ? inCot.value : '';
+        document.getElementById('modObs').value = inObs ? inObs.value : '';
+        
+        document.getElementById('modCotEnv').checked = chkCotEnv ? chkCotEnv.checked : false;
+        document.getElementById('modRealizado').checked = chkRealizado ? chkRealizado.checked : false;
+        document.getElementById('modCierre').checked = chkCierre ? chkCierre.checked : false;
+
+        document.getElementById('fichaModal').style.display = 'flex';
+    };
+
+    window.cerrarFicha = function() {
+        document.getElementById('fichaModal').style.display = 'none';
+    };
+
+    window.guardarFicha = async function() {
+        const { codTienda, mes } = window.fichaContext;
+        
+        const nReq = document.getElementById('modReq').value;
+        const nCot = document.getElementById('modCot').value;
+        const nObs = document.getElementById('modObs').value;
+        const bCotEnv = document.getElementById('modCotEnv').checked;
+        const bRealizado = document.getElementById('modRealizado').checked;
+        const bCierre = document.getElementById('modCierre').checked;
+
+        try {
+            const docRef = doc(db, `estados_${mes}`, codTienda);
+            await setDoc(docRef, {
+                NumReq: nReq,
+                NumCot: nCot,
+                Observaciones: nObs,
+                CotEnviadas: bCotEnv,
+                Realizado: bRealizado,
+                Cierre: bCierre
+            }, { merge: true });
+            
+            cerrarFicha();
+        } catch(error) {
+            console.error("Error al guardar ficha:", error);
+            alert("Hubo un error de conexión al guardar los cambios.");
+        }
+    };
 
     window.onload = async function() {
         document.getElementById('fileLabel').innerHTML = "1. Conectando a Firebase...";
@@ -320,7 +359,7 @@
                 document.getElementById('fileLabel').innerHTML = "1. Archivo de Planificación (.xlsx)";
             }
         } catch (error) {
-            console.error("Error al cargar de Firebase:", error);
+            console.error("Error al cargar:", error);
             document.getElementById('fileLabel').innerHTML = "1. Error de conexión";
         }
     };
@@ -346,7 +385,6 @@
                 actualizarSelectorMeses(datosGlobales);
                 await procesarDatos();
             } catch (error) {
-                console.error("Error al guardar Excel:", error);
                 alert("Error al subir el archivo.");
             }
         };
@@ -354,13 +392,8 @@
     });
 
     document.getElementById('monthSelect').addEventListener('change', async function() {
-        const nuevoMes = this.value;
-        try {
-            await setDoc(doc(db, "sistema", "ultimoMes"), { mes: nuevoMes });
-            await procesarDatos();
-        } catch(error) {
-            console.error("Error al guardar el mes:", error);
-        }
+        await setDoc(doc(db, "sistema", "ultimoMes"), { mes: this.value });
+        await procesarDatos();
     });
 
     function actualizarSelectorMeses(data) {
@@ -368,10 +401,7 @@
         const mesesUnicos = [...new Set(data.map(row => row.MES).filter(Boolean))];
         
         monthSelect.innerHTML = '';
-        if (mesesUnicos.length === 0) {
-            monthSelect.innerHTML = '<option value="">Sin meses</option>';
-            return;
-        }
+        if (mesesUnicos.length === 0) return;
 
         mesesUnicos.forEach(mes => {
             const option = document.createElement('option');
@@ -385,16 +415,15 @@
         const tableBody = document.getElementById('tableBody');
         const mesSeleccionado = document.getElementById('monthSelect').value;
         
-        tableBody.innerHTML = '<tr><td colspan="8" class="empty-state">Procesando estructura...</td></tr>'; 
-
         if (datosGlobales.length === 0 || !mesSeleccionado) {
-            tableBody.innerHTML = '<tr><td colspan="8" class="empty-state">Seleccione un mes o cargue un archivo válido.</td></tr>';
-            if (unsubsribeEstados) { unsubsribeEstados(); } // Cortar escucha si no hay mes
+            tableBody.innerHTML = '<tr><td colspan="11" class="empty-state">Seleccione un mes o cargue un archivo válido.</td></tr>';
+            if (unsubsribeEstados) unsubsribeEstados(); 
             return;
         }
 
         let datosFiltrados = datosGlobales.filter(row => row.MES === mesSeleccionado && row.TIENDA);
-
+        
+        // --- RESTAURADO: ORDENAMIENTO DE FECHAS CRONOLÓGICO ---
         datosFiltrados.sort((a, b) => {
             const parseDate = (fechaStr) => {
                 if (!fechaStr) return 0;
@@ -412,30 +441,46 @@
             };
             return parseDate(a['FECHA INICIO']) - parseDate(b['FECHA INICIO']);
         });
+        
+        const escaparTextos = (texto) => (texto || '').toString().replace(/'/g, "\\'");
 
         if (datosFiltrados.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="8" class="empty-state" style="color: #ef4444;">No se encontraron registros para este mes.</td></tr>';
-            if (unsubsribeEstados) { unsubsribeEstados(); }
+            tableBody.innerHTML = '<tr><td colspan="11" class="empty-state" style="color: #ef4444;">No se encontraron registros.</td></tr>';
+            if (unsubsribeEstados) unsubsribeEstados();
             return;
         }
 
-        // 1. DIBUJAR LA TABLA BASE (Sin datos de Firebase todavía)
         tableBody.innerHTML = '';
         datosFiltrados.forEach((row) => {
             const tr = document.createElement('tr');
             const codTienda = row['CÓDIGO TIENDA'] || '';
             
-            // Les asignamos un "id" único a cada campo para poder inyectar la info en tiempo real después
+            const fechaStr = escaparTextos(row['FECHA INICIO']);
+            const tiendaStr = escaparTextos(row['TIENDA']);
+            const zonalStr = escaparTextos(row['JEFE ZONAL']);
+
             tr.innerHTML = `
+                <td class="centrado">
+                    <button class="btn-ficha" onclick="window.abrirFicha('${codTienda}', '${fechaStr}', '${tiendaStr}', '${zonalStr}', '${mesSeleccionado}')">📝 Ficha</button>
+                </td>
                 <td class="fw-bold">${row['FECHA INICIO'] || ''}</td>
                 <td>${codTienda}</td>
                 <td>${row['TIENDA'] || ''}</td>
                 <td>${row['JEFE ZONAL'] || ''}</td>
                 <td class="centrado">
-                    <input type="text" id="req_${codTienda}" class="input-manual" placeholder="Ej: R-001" onchange="window.guardarCampoManual(this, 'NumReq', '${codTienda}', '${mesSeleccionado}')">
+                    <textarea id="req_${codTienda}" class="input-manual" rows="1" onchange="window.guardarCampoManual(this, 'NumReq', '${codTienda}', '${mesSeleccionado}')"></textarea>
                 </td>
                 <td class="centrado">
-                    <input type="text" id="cot_${codTienda}" class="input-manual" placeholder="Ej: 1234, 5678" onchange="window.guardarCampoManual(this, 'NumCot', '${codTienda}', '${mesSeleccionado}')">
+                    <textarea id="cot_${codTienda}" class="input-manual" rows="1" onchange="window.guardarCampoManual(this, 'NumCot', '${codTienda}', '${mesSeleccionado}')"></textarea>
+                </td>
+                <td>
+                    <textarea id="obs_${codTienda}" class="input-manual input-obs" rows="1" onchange="window.guardarCampoManual(this, 'Observaciones', '${codTienda}', '${mesSeleccionado}')"></textarea>
+                </td>
+                <td class="centrado">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="cotEnv_${codTienda}" onchange="window.guardarEstado(this, 'CotEnviadas', '${codTienda}', '${mesSeleccionado}')">
+                        <span class="slider"></span>
+                    </label>
                 </td>
                 <td class="centrado">
                     <label class="toggle-switch">
@@ -453,81 +498,62 @@
             tableBody.appendChild(tr);
         });
 
-        // 2. ACTIVAR LA LECTURA EN TIEMPO REAL
-        if (unsubsribeEstados) {
-            unsubsribeEstados(); // Cortamos la escucha del mes anterior si es que la había
-        }
+        if (unsubsribeEstados) unsubsribeEstados(); 
 
         const coleccionRef = collection(db, `estados_${mesSeleccionado}`);
         
-        // onSnapshot escucha los cambios 24/7 de manera instantánea
         unsubsribeEstados = onSnapshot(coleccionRef, (snapshot) => {
             snapshot.forEach(doc => {
                 const codTienda = doc.id;
                 const datosNube = doc.data();
 
-                // Buscar los elementos en la tabla
+                const chkCotEnv = document.getElementById(`cotEnv_${codTienda}`);
                 const chkRealizado = document.getElementById(`realizado_${codTienda}`);
                 const chkCierre = document.getElementById(`cierre_${codTienda}`);
                 const inputReq = document.getElementById(`req_${codTienda}`);
                 const inputCot = document.getElementById(`cot_${codTienda}`);
+                const inputObs = document.getElementById(`obs_${codTienda}`); 
 
-                // Actualizar los interruptores (Checkboxes)
+                if (chkCotEnv) chkCotEnv.checked = !!datosNube.CotEnviadas;
                 if (chkRealizado) chkRealizado.checked = !!datosNube.Realizado;
                 if (chkCierre) chkCierre.checked = !!datosNube.Cierre;
 
-                // Actualizar los inputs de texto SOLO si el usuario NO está escribiendo en ellos en este momento
-                if (inputReq && document.activeElement !== inputReq) {
-                    inputReq.value = datosNube.NumReq || '';
-                }
-                if (inputCot && document.activeElement !== inputCot) {
-                    inputCot.value = datosNube.NumCot || '';
-                }
+                if (inputReq && document.activeElement !== inputReq) inputReq.value = datosNube.NumReq || '';
+                if (inputCot && document.activeElement !== inputCot) inputCot.value = datosNube.NumCot || '';
+                if (inputObs && document.activeElement !== inputObs) inputObs.value = datosNube.Observaciones || '';
             });
-        }, (error) => {
-            console.error("Error en la conexión en tiempo real:", error);
         });
     }
 
     window.guardarEstado = async function(checkbox, tipoAccion, codigoTienda, mes) {
         try {
-            const docRef = doc(db, `estados_${mes}`, codigoTienda);
-            await setDoc(docRef, {
-                [tipoAccion]: checkbox.checked
-            }, { merge: true });
+            await setDoc(doc(db, `estados_${mes}`, codigoTienda), { [tipoAccion]: checkbox.checked }, { merge: true });
         } catch(error) {
-            console.error("Error guardando estado:", error);
             checkbox.checked = !checkbox.checked;
-            alert("Hubo un error de conexión al guardar el cambio.");
+            alert("Error de conexión.");
         }
     }
 
     window.guardarCampoManual = async function(input, tipoAccion, codigoTienda, mes) {
         try {
-            const docRef = doc(db, `estados_${mes}`, codigoTienda);
-            await setDoc(docRef, {
-                [tipoAccion]: input.value
-            }, { merge: true });
+            await setDoc(doc(db, `estados_${mes}`, codigoTienda), { [tipoAccion]: input.value }, { merge: true });
         } catch(error) {
-            console.error("Error guardando campo manual:", error);
-            alert("Error al sincronizar el campo con la nube.");
+            alert("Error de conexión.");
         }
     }
 
     window.borrarTodo = async function() {
-        if (confirm("ATENCIÓN: ¿Está seguro que desea limpiar el archivo general de Firebase? Esto afectará a todos los usuarios.")) {
+        if (confirm("ATENCIÓN: ¿Está seguro que desea limpiar el archivo general de Firebase?")) {
             try {
-                if (unsubsribeEstados) unsubsribeEstados(); // Detener la escucha
+                if (unsubsribeEstados) unsubsribeEstados(); 
                 await deleteDoc(doc(db, "sistema", "datosGlobales"));
                 await deleteDoc(doc(db, "sistema", "ultimoMes"));
                 
                 datosGlobales = [];
                 document.getElementById('excelFileInput').value = '';
-                document.getElementById('fileLabel').innerHTML = "1. Archivo de Planificación (.xlsx)";
                 document.getElementById('monthSelect').innerHTML = '<option value="">-- Sin datos --</option>';
                 procesarDatos();
             } catch(error) {
-                console.error("Error al borrar datos:", error);
                 alert("No se pudo limpiar la base de datos.");
             }
         }
