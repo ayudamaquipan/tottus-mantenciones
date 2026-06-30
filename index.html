@@ -203,6 +203,13 @@
             <input type="text" id="searchInput" class="search-input" placeholder="Buscar local, REQ, código o Zonal..." oninput="window.aplicarFiltroBuscador()">
         </div>
 
+        <div class="control-group">
+            <label for="filterPending" style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-top: 25px; font-weight: 600; color: #ef4444;">
+                <input type="checkbox" id="filterPending" onchange="window.aplicarFiltroBuscador()" style="cursor:pointer; width: 16px; height: 16px;">
+                Pendientes sin REQ
+            </label>
+        </div>
+
         <button class="btn-clear" onclick="borrarTodo()">Restablecer Panel</button>
     </div>
 
@@ -277,13 +284,13 @@
 
     // REEMPLAZA ESTO CON TU CONFIGURACIÓN DE FIREBASE
     const firebaseConfig = {
-  apiKey: "AIzaSyCzdsA0bqZaIds-Uz7sQgIdm6qoyppesUI",
-  authDomain: "tottus-servicios.firebaseapp.com",
-  projectId: "tottus-servicios",
-  storageBucket: "tottus-servicios.firebasestorage.app",
-  messagingSenderId: "698833510541",
-  appId: "1:698833510541:web:f8d51d2f9d7bdc7291c2c4"
-};
+      apiKey: "AIzaSyCzdsA0bqZaIds-Uz7sQgIdm6qoyppesUI",
+      authDomain: "tottus-servicios.firebaseapp.com",
+      projectId: "tottus-servicios",
+      storageBucket: "tottus-servicios.firebasestorage.app",
+      messagingSenderId: "698833510541",
+      appId: "1:698833510541:web:f8d51d2f9d7bdc7291c2c4"
+    };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -293,7 +300,12 @@
 
     window.aplicarFiltroBuscador = function() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const filterPending = document.getElementById('filterPending') ? document.getElementById('filterPending').checked : false;
         const rows = document.querySelectorAll('#tableBody tr');
+
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+        const hoyMs = hoy.getTime();
 
         rows.forEach(row => {
             if (row.querySelector('.empty-state')) return;
@@ -303,10 +315,33 @@
             let inputTexts = '';
             textareas.forEach(ta => inputTexts += ta.value.toLowerCase() + ' ');
 
-            if (textContent.includes(searchTerm) || inputTexts.includes(searchTerm)) {
+            const reqInput = row.querySelector('textarea[id^="req_"]');
+            const realizadoCheck = row.querySelector('input[type="checkbox"][id^="realizado_"]');
+
+            let matchSearch = (textContent.includes(searchTerm) || inputTexts.includes(searchTerm));
+            let matchPending = true;
+
+            const hasReq = reqInput && reqInput.value.trim() !== '';
+            const isRealizado = realizadoCheck && realizadoCheck.checked;
+
+            // Filtro de pendientes sin REQ
+            if (filterPending) {
+                matchPending = !isRealizado && !hasReq;
+            }
+
+            // Mostrar u ocultar fila
+            if (matchSearch && matchPending) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';
+            }
+
+            // ALERTA VISUAL: Pinta de rojo suave si está atrasado y no está realizado
+            const fechaRowMs = parseInt(row.getAttribute('data-fecha'));
+            if (fechaRowMs && fechaRowMs < hoyMs && !isRealizado) {
+                row.style.backgroundColor = '#fee2e2'; // Fondo rojo claro
+            } else {
+                row.style.backgroundColor = ''; // Restablece el color normal
             }
         });
     }
@@ -410,15 +445,29 @@
             const worksheet = workbook.Sheets[workbook.SheetNames[0]];
             const jsonResult = XLSX.utils.sheet_to_json(worksheet, { raw: false, range: 2 });
             
-            datosGlobales = jsonResult;
+            // 1. Identificamos qué meses vienen en el nuevo Excel
+            const nuevosMeses = [...new Set(jsonResult.map(row => row.MES).filter(Boolean))];
+            
+            // 2. Filtramos el historial quitando los meses que se están actualizando
+            let datosFiltradosAntiguos = datosGlobales.filter(row => !nuevosMeses.includes(row.MES));
+            
+            // 3. Unimos los meses pasados con la data nueva
+            datosGlobales = [...datosFiltradosAntiguos, ...jsonResult];
             
             try {
-                await setDoc(doc(db, "sistema", "datosGlobales"), { excelJson: JSON.stringify(jsonResult) });
+                await setDoc(doc(db, "sistema", "datosGlobales"), { excelJson: JSON.stringify(datosGlobales) });
                 document.getElementById('fileLabel').innerHTML = "1. Archivo Cargado con Éxito";
                 actualizarSelectorMeses(datosGlobales);
+                
+                // Si hay un mes nuevo, lo selecciona automáticamente
+                if (nuevosMeses.length > 0) {
+                    document.getElementById('monthSelect').value = nuevosMeses[0];
+                    await setDoc(doc(db, "sistema", "ultimoMes"), { mes: nuevosMeses[0] });
+                }
+
                 await procesarDatos();
             } catch (error) {
-                alert("Error al subir el archivo.");
+                alert("Error al subir y combinar el archivo.");
             }
         };
         reader.readAsArrayBuffer(file);
@@ -458,23 +507,22 @@
 
         let datosFiltrados = datosGlobales.filter(row => row.MES === mesSeleccionado && row.TIENDA);
         
-        datosFiltrados.sort((a, b) => {
-            const parseDate = (fechaStr) => {
-                if (!fechaStr) return 0;
-                if (typeof fechaStr === 'number') return fechaStr;
-                let str = fechaStr.toString().trim();
-                let partes = str.replace(/\//g, '-').split('-');
-                if (partes.length === 3) {
-                    if (partes[0].length <= 2 && partes[2].length === 4) {
-                        return new Date(`${partes[2]}-${partes[1]}-${partes[0]}`).getTime();
-                    } else if (partes[0].length === 4) {
-                        return new Date(`${partes[0]}-${partes[1]}-${partes[2]}`).getTime();
-                    }
+        const parseDate = (fechaStr) => {
+            if (!fechaStr) return 0;
+            if (typeof fechaStr === 'number') return fechaStr;
+            let str = fechaStr.toString().trim();
+            let partes = str.replace(/\//g, '-').split('-');
+            if (partes.length === 3) {
+                if (partes[0].length <= 2 && partes[2].length === 4) {
+                    return new Date(`${partes[2]}-${partes[1]}-${partes[0]}`).getTime();
+                } else if (partes[0].length === 4) {
+                    return new Date(`${partes[0]}-${partes[1]}-${partes[2]}`).getTime();
                 }
-                return new Date(str).getTime() || 0;
-            };
-            return parseDate(a['FECHA INICIO']) - parseDate(b['FECHA INICIO']);
-        });
+            }
+            return new Date(str).getTime() || 0;
+        };
+
+        datosFiltrados.sort((a, b) => parseDate(a['FECHA INICIO']) - parseDate(b['FECHA INICIO']));
         
         const escaparTextos = (texto) => (texto || '').toString().replace(/'/g, "\\'");
 
@@ -493,7 +541,10 @@
             const tiendaStr = escaparTextos(row['TIENDA']);
             const zonalStr = escaparTextos(row['JEFE ZONAL']);
 
-            // Aquí invertimos el orden de las etiquetas HTML de los interruptores
+            // AGREGAMOS LA FECHA OCULTA AL <tr> PARA PODER COMPARARLA EN ROJO LUEGO
+            const timestamp = parseDate(row['FECHA INICIO']);
+            tr.setAttribute('data-fecha', timestamp);
+
             tr.innerHTML = `
                 <td class="centrado">
                     <button class="btn-ficha" onclick="window.abrirFicha('${codTienda}', '${fechaStr}', '${tiendaStr}', '${zonalStr}', '${mesSeleccionado}')">📝 Ficha</button>
