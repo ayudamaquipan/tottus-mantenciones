@@ -32,6 +32,9 @@
             color: white;
             padding: 15px 30px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         header h1 { margin: 0; font-size: 1.3rem; font-weight: 600; letter-spacing: -0.5px; }
@@ -44,6 +47,20 @@
             padding: 0 10px;
             box-sizing: border-box;
         }
+
+        /* --- ESTILOS DEL LOGIN --- */
+        #loginContainer {
+            width: 100%; max-width: 400px; margin: 80px auto; 
+            background: var(--surface); padding: 30px; border-radius: 10px; 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 1px solid var(--border);
+        }
+        #loginContainer h2 { margin-top: 0; color: var(--primary); text-align: center; }
+        .login-btn {
+            width: 100%; background: var(--secondary); color: white; border: none; 
+            padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; 
+            font-size: 1rem; margin-top: 10px; transition: 0.2s;
+        }
+        .login-btn:hover { background: #2563eb; }
 
         .control-panel {
             background-color: var(--surface);
@@ -72,16 +89,8 @@
             transition: border-color 0.2s;
         }
 
-        .search-input {
-            min-width: 250px;
-            background-color: white;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-        }
+        .search-input { min-width: 250px; background-color: white; }
+        .search-input:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
 
         select {
             cursor: pointer; min-width: 180px; appearance: none;
@@ -89,21 +98,20 @@
             background-repeat: no-repeat; background-position: right 10px center;
         }
 
-        .btn-clear {
-            background-color: #ef4444; color: white; border: none; padding: 8px 16px;
+        .btn-action {
+            color: white; border: none; padding: 8px 16px;
             border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 0.9rem;
-            margin-left: auto; transition: 0.2s;
+            transition: 0.2s;
         }
+        .btn-clear { background-color: #ef4444; margin-left: auto; }
         .btn-clear:hover { background-color: #dc2626; }
+        .btn-logout { background-color: #64748b; }
+        .btn-logout:hover { background-color: #475569; }
 
         .table-container {
-            background-color: var(--surface);
-            border-radius: 10px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--border);
-            max-height: calc(100vh - 240px); 
-            overflow-y: auto; 
-            overflow-x: auto; 
+            background-color: var(--surface); border-radius: 10px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid var(--border);
+            max-height: calc(100vh - 240px); overflow-y: auto; overflow-x: auto; 
         }
 
         .table-container::-webkit-scrollbar { width: 10px; height: 12px; }
@@ -112,35 +120,18 @@
         .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         table { width: 100%; border-collapse: collapse; text-align: left; min-width: 1250px; }
-
-        th {
-            background-color: var(--background); color: var(--text-muted);
-            font-weight: 600; font-size: 0.8rem; text-transform: uppercase;
-            padding: 12px; border-bottom: 2px solid var(--border);
-            position: sticky; top: 0; z-index: 10; white-space: nowrap;
-            box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); 
-        }
-
+        th { background-color: var(--background); color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; padding: 12px; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 10; white-space: nowrap; box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); }
         td { padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 0.85rem; vertical-align: middle; }
         tr:hover td { background-color: #f1f5f9; }
 
         .centrado { text-align: center; }
         .fw-bold { font-weight: 600; color: var(--primary); }
 
-        .input-manual {
-            padding: 6px; border: 1px solid var(--border); border-radius: 6px;
-            font-family: 'Inter', sans-serif; font-size: 0.85rem; width: 110px; 
-            min-height: 32px; box-sizing: border-box; background-color: #fafafa;
-            resize: vertical; transition: all 0.2s;
-        }
+        .input-manual { padding: 6px; border: 1px solid var(--border); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.85rem; width: 110px; min-height: 32px; box-sizing: border-box; background-color: #fafafa; resize: vertical; transition: all 0.2s; }
         .input-obs { width: 160px; }
         .input-manual:focus { outline: none; border-color: var(--secondary); background-color: white; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
 
-        .btn-ficha {
-            background-color: #e2e8f0; color: var(--primary); border: none;
-            padding: 6px 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem;
-            cursor: pointer; transition: 0.2s; white-space: nowrap;
-        }
+        .btn-ficha { background-color: #e2e8f0; color: var(--primary); border: none; padding: 6px 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; white-space: nowrap; }
         .btn-ficha:hover { background-color: #cbd5e1; }
 
         .toggle-switch { position: relative; display: inline-block; width: 36px; height: 20px; }
@@ -180,11 +171,28 @@
 <body>
 
 <header>
-    <h1>Supervisión Técnica Nacional</h1>
-    <p>Panel de Control de Servicios y Mantenimientos en Terreno</p>
+    <div>
+        <h1>Supervisión Técnica Nacional</h1>
+        <p>Panel de Control de Servicios y Mantenimientos en Terreno</p>
+    </div>
+    <button id="btnLogout" class="btn-action btn-logout" onclick="cerrarSesion()" style="display: none;">Cerrar Sesión</button>
 </header>
 
-<div class="container">
+<div id="loginContainer">
+    <h2>Iniciar Sesión</h2>
+    <div class="control-group" style="margin-bottom: 15px;">
+        <label>Correo Electrónico</label>
+        <input type="email" id="txtEmail" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="usuario@correo.com">
+    </div>
+    <div class="control-group" style="margin-bottom: 20px;">
+        <label>Contraseña</label>
+        <input type="password" id="txtPassword" class="search-input" style="width: 100%; box-sizing: border-box;" placeholder="******">
+    </div>
+    <button onclick="iniciarSesion()" class="login-btn">Ingresar al Panel</button>
+    <p id="loginError" style="color: #ef4444; font-size: 0.85rem; margin-top: 10px; display: none; text-align: center;">Credenciales incorrectas.</p>
+</div>
+
+<div class="container" id="mainContainer" style="display: none;">
     <div class="control-panel">
         <div class="control-group">
             <label id="fileLabel">1. Archivo de Planificación</label>
@@ -210,7 +218,7 @@
             </label>
         </div>
 
-        <button class="btn-clear" onclick="borrarTodo()">Restablecer Panel</button>
+        <button class="btn-action btn-clear" onclick="borrarTodo()">Restablecer Panel</button>
     </div>
 
     <div class="table-container">
@@ -232,7 +240,7 @@
             </thead>
             <tbody id="tableBody">
                 <tr>
-                    <td colspan="11" class="empty-state">Seleccione un mes o cargue su archivo Excel para comenzar.</td>
+                    <td colspan="11" class="empty-state">Cargando base de datos...</td>
                 </tr>
             </tbody>
         </table>
@@ -281,8 +289,9 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getFirestore, doc, setDoc, getDoc, collection, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+    // IMPORTAMOS AUTHENTICATION
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-    // REEMPLAZA ESTO CON TU CONFIGURACIÓN DE FIREBASE
     const firebaseConfig = {
       apiKey: "AIzaSyCzdsA0bqZaIds-Uz7sQgIdm6qoyppesUI",
       authDomain: "tottus-servicios.firebaseapp.com",
@@ -294,9 +303,85 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app); // INICIALIZAMOS AUTH
 
     let datosGlobales = [];
     let unsubsribeEstados = null;
+
+    // --- LÓGICA DE SESIÓN ---
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            // Usuario logueado: Muestra el panel y oculta el login
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('mainContainer').style.display = 'block';
+            document.getElementById('btnLogout').style.display = 'block';
+            document.getElementById('fileLabel').innerHTML = "1. Conectando a Firebase...";
+            
+            try {
+                const docRef = doc(db, "sistema", "datosGlobales");
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    datosGlobales = JSON.parse(docSnap.data().excelJson || "[]");
+                    document.getElementById('fileLabel').innerHTML = "1. Archivo Activo en Nube";
+                    actualizarSelectorMeses(datosGlobales);
+                    
+                    // LÓGICA: SELECCIONAR SIEMPRE EL ÚLTIMO MES CARGADO
+                    const mesesUnicos = [...new Set(datosGlobales.map(row => row.MES).filter(Boolean))];
+                    if (mesesUnicos.length > 0) {
+                        // Tomamos siempre el último elemento del array de meses
+                        const ultimoMesCargado = mesesUnicos[mesesUnicos.length - 1];
+                        document.getElementById('monthSelect').value = ultimoMesCargado;
+                    }
+                    
+                    await procesarDatos();
+                } else {
+                    document.getElementById('fileLabel').innerHTML = "1. Archivo de Planificación (.xlsx)";
+                    document.getElementById('tableBody').innerHTML = '<tr><td colspan="11" class="empty-state">No hay datos. Cargue un archivo Excel.</td></tr>';
+                }
+            } catch (error) {
+                console.error("Error al cargar:", error);
+                document.getElementById('fileLabel').innerHTML = "1. Error de conexión";
+            }
+        } else {
+            // Sin usuario: Muestra el login y oculta el panel
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('mainContainer').style.display = 'none';
+            document.getElementById('btnLogout').style.display = 'none';
+        }
+    });
+
+    window.iniciarSesion = function() {
+        const email = document.getElementById('txtEmail').value;
+        const pass = document.getElementById('txtPassword').value;
+        const msjError = document.getElementById('loginError');
+        
+        msjError.style.display = 'none';
+        
+        signInWithEmailAndPassword(auth, email, pass)
+            .then((userCredential) => {
+                // Éxito. Limpiar campos
+                document.getElementById('txtEmail').value = '';
+                document.getElementById('txtPassword').value = '';
+            })
+            .catch((error) => {
+                console.error("Error de login:", error);
+                msjError.style.display = 'block';
+            });
+    };
+
+    window.cerrarSesion = function() {
+        signOut(auth).then(() => {
+            // Limpiar datos en memoria al salir
+            datosGlobales = [];
+            document.getElementById('tableBody').innerHTML = '<tr><td colspan="11" class="empty-state">Cargando base de datos...</td></tr>';
+            document.getElementById('monthSelect').innerHTML = '<option value="">-- Sin datos --</option>';
+            if (unsubsribeEstados) unsubsribeEstados();
+        }).catch((error) => {
+            console.error("Error al cerrar sesión:", error);
+        });
+    };
+    // ------------------------
 
     window.aplicarFiltroBuscador = function() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
@@ -324,24 +409,21 @@
             const hasReq = reqInput && reqInput.value.trim() !== '';
             const isRealizado = realizadoCheck && realizadoCheck.checked;
 
-            // Filtro de pendientes sin REQ
             if (filterPending) {
                 matchPending = !isRealizado && !hasReq;
             }
 
-            // Mostrar u ocultar fila
             if (matchSearch && matchPending) {
                 row.style.display = '';
             } else {
                 row.style.display = 'none';
             }
 
-            // ALERTA VISUAL: Pinta de rojo suave si está atrasado y no está realizado
             const fechaRowMs = parseInt(row.getAttribute('data-fecha'));
             if (fechaRowMs && fechaRowMs < hoyMs && !isRealizado) {
-                row.style.backgroundColor = '#fee2e2'; // Fondo rojo claro
+                row.style.backgroundColor = '#fee2e2'; 
             } else {
-                row.style.backgroundColor = ''; // Restablece el color normal
+                row.style.backgroundColor = ''; 
             }
         });
     }
@@ -407,31 +489,6 @@
         }
     };
 
-    window.onload = async function() {
-        document.getElementById('fileLabel').innerHTML = "1. Conectando a Firebase...";
-        try {
-            const docRef = doc(db, "sistema", "datosGlobales");
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                datosGlobales = JSON.parse(docSnap.data().excelJson || "[]");
-                document.getElementById('fileLabel').innerHTML = "1. Archivo Activo en Nube";
-                actualizarSelectorMeses(datosGlobales);
-                
-                const mesDoc = await getDoc(doc(db, "sistema", "ultimoMes"));
-                if (mesDoc.exists()) {
-                    document.getElementById('monthSelect').value = mesDoc.data().mes;
-                }
-                await procesarDatos();
-            } else {
-                document.getElementById('fileLabel').innerHTML = "1. Archivo de Planificación (.xlsx)";
-            }
-        } catch (error) {
-            console.error("Error al cargar:", error);
-            document.getElementById('fileLabel').innerHTML = "1. Error de conexión";
-        }
-    };
-
     document.getElementById('excelFileInput').addEventListener('change', function(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -445,13 +502,9 @@
             const worksheet = workbook.Sheets[workbook.SheetNames[0]];
             const jsonResult = XLSX.utils.sheet_to_json(worksheet, { raw: false, range: 2 });
             
-            // 1. Identificamos qué meses vienen en el nuevo Excel
             const nuevosMeses = [...new Set(jsonResult.map(row => row.MES).filter(Boolean))];
-            
-            // 2. Filtramos el historial quitando los meses que se están actualizando
             let datosFiltradosAntiguos = datosGlobales.filter(row => !nuevosMeses.includes(row.MES));
             
-            // 3. Unimos los meses pasados con la data nueva
             datosGlobales = [...datosFiltradosAntiguos, ...jsonResult];
             
             try {
@@ -459,10 +512,10 @@
                 document.getElementById('fileLabel').innerHTML = "1. Archivo Cargado con Éxito";
                 actualizarSelectorMeses(datosGlobales);
                 
-                // Si hay un mes nuevo, lo selecciona automáticamente
+                // Si hay meses nuevos, selecciona automáticamente el último mes cargado
                 if (nuevosMeses.length > 0) {
-                    document.getElementById('monthSelect').value = nuevosMeses[0];
-                    await setDoc(doc(db, "sistema", "ultimoMes"), { mes: nuevosMeses[0] });
+                    const ultimoMesCargado = nuevosMeses[nuevosMeses.length - 1];
+                    document.getElementById('monthSelect').value = ultimoMesCargado;
                 }
 
                 await procesarDatos();
@@ -474,7 +527,6 @@
     });
 
     document.getElementById('monthSelect').addEventListener('change', async function() {
-        await setDoc(doc(db, "sistema", "ultimoMes"), { mes: this.value });
         await procesarDatos();
     });
 
@@ -541,7 +593,6 @@
             const tiendaStr = escaparTextos(row['TIENDA']);
             const zonalStr = escaparTextos(row['JEFE ZONAL']);
 
-            // AGREGAMOS LA FECHA OCULTA AL <tr> PARA PODER COMPARARLA EN ROJO LUEGO
             const timestamp = parseDate(row['FECHA INICIO']);
             tr.setAttribute('data-fecha', timestamp);
 
@@ -633,8 +684,8 @@
         if (confirm("ATENCIÓN: ¿Está seguro que desea limpiar el archivo general de Firebase?")) {
             try {
                 if (unsubsribeEstados) unsubsribeEstados(); 
+                // Al limpiar borramos la caché global
                 await deleteDoc(doc(db, "sistema", "datosGlobales"));
-                await deleteDoc(doc(db, "sistema", "ultimoMes"));
                 
                 datosGlobales = [];
                 document.getElementById('excelFileInput').value = '';
