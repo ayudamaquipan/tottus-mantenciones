@@ -354,13 +354,14 @@
                         <th>Nombre Tienda</th>
                         <th>Equipo Asignado</th>
                         <th>N° Cotización</th>
+                        <th>Detalle</th> <!-- NUEVA COLUMNA -->
                         <th>Monto</th>
                         <th class="centrado">Fecha</th>
                         <th class="centrado">Estado de Proceso</th>
                     </tr>
                 </thead>
                 <tbody id="dashTableBody">
-                    <tr><td colspan="7" class="empty-state">Cargando dashboard...</td></tr>
+                    <tr><td colspan="8" class="empty-state">Cargando dashboard...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1018,7 +1019,7 @@
     // --- LÓGICA DEL DASHBOARD DE COTIZACIONES ---
     window.cargarDashboardCotizaciones = async function() {
         const tbody = document.getElementById('dashTableBody');
-        tbody.innerHTML = '<tr><td colspan="7" class="centrado">Extrayendo datos de los equipos...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="centrado">Extrayendo datos de los equipos...</td></tr>';
 
         // 1. Mapeamos los nombres de tienda basados en el Excel (datosGlobales)
         let mapTiendas = {};
@@ -1045,7 +1046,7 @@
                         if(eq.listaCotizaciones && eq.listaCotizaciones.length > 0) {
                             eq.listaCotizaciones.forEach(cot => {
                                 // Ignorar si son cotizaciones completamente vacías
-                                if(!cot.numero && !cot.monto) return;
+                                if(!cot.numero && !cot.monto && !cot.detalle) return;
 
                                 total++;
                                 if(cot.realizado) ejecutadas++;
@@ -1057,6 +1058,7 @@
                                     nombreTienda,
                                     equipo: eq.nombre,
                                     numero: cot.numero || 'S/N',
+                                    detalle: cot.detalle || '', 
                                     monto: cot.monto || '-',
                                     fecha: cot.fecha ? cot.fecha.split('-').reverse().join('-') : '-',
                                     tieneOC: cot.tieneOC,
@@ -1077,7 +1079,7 @@
             // 4. Dibujar Tabla
             tbody.innerHTML = '';
             if(arrayCotizaciones.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="centrado empty-state">Aún no hay cotizaciones registradas en los equipos.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="centrado empty-state">Aún no hay cotizaciones registradas en los equipos.</td></tr>';
                 return;
             }
 
@@ -1100,6 +1102,7 @@
                     <td style="font-size: 0.8rem;">${cot.nombreTienda}</td>
                     <td style="font-size: 0.8rem;">🔧 ${cot.equipo}</td>
                     <td class="fw-bold">${cot.numero}</td>
+                    <td style="font-size: 0.8rem; color: var(--text-muted);">${cot.detalle}</td>
                     <td>${cot.monto !== '-' ? '$' + cot.monto : '-'}</td>
                     <td class="centrado">${cot.fecha}</td>
                     <td class="centrado">${badgeHTML}</td>
@@ -1112,7 +1115,7 @@
 
         } catch(e) {
             console.error(e);
-            tbody.innerHTML = '<tr><td colspan="7" class="centrado empty-state" style="color: #ef4444;">Ocurrió un error al cargar el Dashboard.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" class="centrado empty-state" style="color: #ef4444;">Ocurrió un error al cargar el Dashboard.</td></tr>';
         }
     };
 
@@ -1163,7 +1166,7 @@
                     if (!eq.listaCotizaciones) {
                         eq.listaCotizaciones = [];
                         if (eq.cotizaciones && eq.cotizaciones.trim() !== '') {
-                            eq.listaCotizaciones.push({ numero: eq.cotizaciones, monto: '', fecha: '', tieneOC: false, realizado: false });
+                            eq.listaCotizaciones.push({ numero: eq.cotizaciones, monto: '', fecha: '', detalle: '', tieneOC: false, realizado: false });
                             eq.cotizaciones = ''; 
                         }
                     }
@@ -1221,10 +1224,14 @@
                     cotizacionesHTML += `
                         <div class="cot-item">
                             <div class="cot-grid-info">
-                                <input type="text" class="equipo-input" value="${cot.numero || ''}" placeholder="N° o Detalle de Cot." onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'numero', this.value)">
+                                <input type="text" class="equipo-input" value="${cot.numero || ''}" placeholder="N° Cotización" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'numero', this.value)">
                                 <input type="text" class="equipo-input" value="${cot.monto || ''}" placeholder="Monto ($)" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'monto', this.value)">
                                 <input type="date" class="equipo-input" value="${cot.fecha || ''}" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'fecha', this.value)" title="Fecha de emisión">
                                 <button class="btn-del-hist" onclick="window.eliminarCotizacion(${index}, ${cIndex})">Borrar</button>
+                            </div>
+                            <!-- NUEVO CAMPO DETALLE -->
+                            <div style="margin-bottom: 8px;">
+                                <input type="text" class="equipo-input" value="${cot.detalle || ''}" placeholder="Detalle u observación de lo cotizado..." onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'detalle', this.value)" style="width: 100%;">
                             </div>
                             <div class="cot-grid-checks">
                                 <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
@@ -1344,6 +1351,7 @@
             numero: '',
             monto: '',
             fecha: '',
+            detalle: '', // NUEVO CAMPO
             tieneOC: false,
             realizado: false
         });
