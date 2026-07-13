@@ -62,31 +62,24 @@
         }
         .login-btn:hover { background: #2563eb; }
 
+        /* --- PESTAÑAS (TABS) --- */
+        .tabs-container { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { background: #e2e8f0; color: #475569; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; }
+        .tab-btn:hover { background: #cbd5e1; }
+        .tab-btn.active { background: var(--secondary); color: white; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3); }
+
         .control-panel {
-            background-color: var(--surface);
-            padding: 16px 24px;
-            border-radius: 10px;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            align-items: flex-end;
-            margin-bottom: 20px;
-            border: 1px solid var(--border);
+            background-color: var(--surface); padding: 16px 24px; border-radius: 10px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); display: flex; flex-wrap: wrap; gap: 20px;
+            align-items: flex-end; margin-bottom: 20px; border: 1px solid var(--border);
         }
 
         .control-group { display: flex; flex-direction: column; gap: 6px; }
         .control-group label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
 
         select, input[type="file"], .search-input {
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            background-color: var(--background);
-            color: var(--text-main);
-            transition: border-color 0.2s;
+            padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-family: 'Inter', sans-serif;
+            font-size: 0.9rem; background-color: var(--background); color: var(--text-main); transition: border-color 0.2s;
         }
 
         .search-input { min-width: 250px; background-color: white; }
@@ -98,11 +91,7 @@
             background-repeat: no-repeat; background-position: right 10px center;
         }
 
-        .btn-action {
-            color: white; border: none; padding: 8px 16px;
-            border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 0.9rem;
-            transition: 0.2s;
-        }
+        .btn-action { color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 0.9rem; transition: 0.2s; }
         .btn-clear { background-color: #ef4444; margin-left: auto; }
         .btn-clear:hover { background-color: #dc2626; }
         .btn-logout { background-color: #64748b; }
@@ -111,7 +100,7 @@
         .table-container {
             background-color: var(--surface); border-radius: 10px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid var(--border);
-            max-height: calc(100vh - 240px); overflow-y: auto; overflow-x: auto; 
+            max-height: calc(100vh - 280px); overflow-y: auto; overflow-x: auto; 
         }
 
         .table-container::-webkit-scrollbar { width: 10px; height: 12px; }
@@ -141,6 +130,21 @@
         input:checked + .slider { background-color: var(--success); }
         input:checked + .slider:before { transform: translateX(16px); }
 
+        /* --- DASHBOARD KPIs & BADGES --- */
+        .kpi-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .kpi-card { background: var(--surface); padding: 15px 20px; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .kpi-card.b-blue { border-left: 4px solid var(--secondary); }
+        .kpi-card.b-yellow { border-left: 4px solid #f59e0b; }
+        .kpi-card.b-green { border-left: 4px solid var(--success); }
+        .kpi-card.b-indigo { border-left: 4px solid #4f46e5; }
+        .kpi-title { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 5px; }
+        .kpi-value { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+
+        .badge { padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; display: inline-block; }
+        .badge-pending { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+        .badge-oc { background: #e0e7ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .badge-done { background: #d1fae5; color: #047857; border: 1px solid #a7f3d0; }
+
         /* --- MODAL FICHA COMPLETA --- */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
         .modal-content { background: var(--surface); padding: 24px; border-radius: 10px; width: 90%; max-width: 650px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; gap: 16px; animation: fadeIn 0.2s ease-out; }
@@ -166,6 +170,59 @@
         .btn-save:hover { background: #2563eb; }
 
         .empty-state { padding: 40px; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+
+        /* --- MODAL DE EQUIPOS (NUEVO DISEÑO ACORDEÓN) --- */
+        .equipos-list { display: flex; flex-direction: column; gap: 12px; max-height: 50vh; overflow-y: auto; margin-top: 15px; padding-right: 5px; }
+        .equipos-list::-webkit-scrollbar { width: 6px; }
+        .equipos-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
+
+        details.equipo-card { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; text-align: left; transition: all 0.3s ease; }
+        details.equipo-card > summary { padding: 14px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: var(--primary); cursor: pointer; list-style: none; font-size: 0.95rem; user-select: none; }
+        details.equipo-card > summary::-webkit-details-marker { display: none; }
+        details.equipo-card > summary:hover { background: #f1f5f9; border-radius: 8px; }
+        details.equipo-card[open] > summary { border-bottom: 2px solid #e2e8f0; background: #f1f5f9; border-radius: 8px 8px 0 0; }
+        .equipo-summary-icon { transition: transform 0.3s ease; color: var(--text-muted); font-size: 0.8rem; }
+        details.equipo-card[open] > summary .equipo-summary-icon { transform: rotate(180deg); }
+
+        .equipo-content { padding: 14px; display: flex; flex-direction: column; gap: 12px; background: #ffffff; border-radius: 0 0 8px 8px; }
+        .btn-remove { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; align-self: flex-end; margin-top: 10px; transition: 0.2s; }
+        .btn-remove:hover { background: #dc2626; }
+        .equipo-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .equipo-field { display: flex; flex-direction: column; gap: 6px; }
+        .equipo-field label { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+        
+        .equipo-input, .equipo-textarea { padding: 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; font-family: 'Inter', sans-serif; background: white; width: 100%; box-sizing: border-box; transition: 0.2s; }
+        .equipo-input:focus, .equipo-textarea:focus { outline: none; border-color: var(--secondary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .equipo-textarea { resize: vertical; min-height: 50px; }
+
+        .add-equipo-container { display: flex; gap: 8px; margin-top: 10px; }
+        .btn-add { background: var(--success); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+        .btn-add:hover { background: #059669; }
+        .btn-equipos { background-color: #f59e0b; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; white-space: nowrap; margin-left: 5px; }
+        .btn-equipos:hover { background-color: #d97706; }
+
+        /* --- SECCIÓN DE COTIZACIONES (MODAL) --- */
+        .cot-section { margin-top: 5px; border-top: 1px dashed #cbd5e1; padding-top: 10px; }
+        .cot-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 8px; }
+        .cot-grid-info { display: grid; grid-template-columns: 1fr 100px 130px auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+        .cot-grid-checks { display: flex; gap: 20px; font-weight: 600; color: var(--text-main); font-size: 0.8rem; align-items: center; background: #ffffff; padding: 6px 10px; border-radius: 4px; border: 1px solid #e2e8f0; }
+
+        /* --- ESTILOS DEL HISTORIAL DE EQUIPOS --- */
+        .historial-section { margin-top: 10px; border-top: 1px dashed #cbd5e1; padding-top: 10px; }
+        .historial-title { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .historial-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+        .historial-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; font-size: 0.8rem; display: flex; flex-direction: column; gap: 4px; }
+        .historial-item-header { display: flex; justify-content: space-between; font-weight: 600; color: var(--primary); }
+        .btn-del-hist { color: #ef4444; cursor: pointer; font-size: 0.75rem; border: none; background: none; padding: 0; font-weight: bold; }
+        .btn-del-hist:hover { text-decoration: underline; }
+        .add-hist-grid { display: grid; grid-template-columns: 110px 130px 1fr auto; gap: 6px; align-items: start; }
+        .btn-add-hist { background: var(--secondary); color: white; border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
+        .btn-add-hist:hover { background: #2563eb; }
+        
+        @media (max-width: 650px) {
+            .add-hist-grid { grid-template-columns: 1fr; }
+            .cot-grid-info { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -193,67 +250,134 @@
 </div>
 
 <div class="container" id="mainContainer" style="display: none;">
-    <div class="control-panel">
-        <div class="control-group">
-            <label id="fileLabel">1. Archivo de Planificación</label>
-            <input type="file" id="excelFileInput" accept=".xlsx, .xls">
-        </div>
-
-        <div class="control-group">
-            <label for="monthSelect">2. Mes Operativo</label>
-            <select id="monthSelect">
-                <option value="">-- Sin datos --</option>
-            </select>
-        </div>
-
-        <div class="control-group">
-            <label for="searchInput">3. Buscar en la tabla</label>
-            <input type="text" id="searchInput" class="search-input" placeholder="Buscar local, REQ, código o Zonal..." oninput="window.aplicarFiltroBuscador()">
-        </div>
-
-        <div class="control-group">
-            <label for="filterPending" style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-top: 25px; font-weight: 600; color: #ef4444;">
-                <input type="checkbox" id="filterPending" onchange="window.aplicarFiltroBuscador()" style="cursor:pointer; width: 16px; height: 16px;">
-                Pendientes sin REQ
-            </label>
-        </div>
-
-        <button class="btn-action btn-clear" onclick="borrarTodo()">Restablecer Panel</button>
+    
+    <!-- PESTAÑAS DE NAVEGACIÓN -->
+    <div class="tabs-container">
+        <button id="tabBtnPanel" class="tab-btn active" onclick="cambiarVista('panel')">📊 Panel Principal</button>
+        <button id="tabBtnDash" class="tab-btn" onclick="cambiarVista('dashboard')">📈 Dashboard Cotizaciones</button>
     </div>
 
-    <div class="table-container">
-        <table id="dataTable">
-            <thead>
-                <tr>
-                    <th>Acción</th>
-                    <th>Fecha Inicio</th>
-                    <th>Cód. Tienda</th>
-                    <th>Tienda</th>
-                    <th>Responsable Zonal</th>
-                    <th class="centrado">N° REQ</th>
-                    <th class="centrado">N° Cotización</th>
-                    <th>Observaciones</th>
-                    <th class="centrado">Realizado</th>
-                    <th class="centrado">Cot. Enviadas</th>
-                    <th class="centrado">Cierre</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                <tr>
-                    <td colspan="11" class="empty-state">Cargando base de datos...</td>
-                </tr>
-            </tbody>
-        </table>
+    <!-- VISTA 1: PANEL PRINCIPAL (EXISTENTE) -->
+    <div id="vistaPanel">
+        <div class="control-panel">
+            <div class="control-group">
+                <label id="fileLabel">1. Archivo de Planificación</label>
+                <input type="file" id="excelFileInput" accept=".xlsx, .xls">
+            </div>
+
+            <div class="control-group">
+                <label for="monthSelect">2. Mes Operativo</label>
+                <select id="monthSelect">
+                    <option value="">-- Sin datos --</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="searchInput">3. Buscar en la tabla</label>
+                <input type="text" id="searchInput" class="search-input" placeholder="Buscar local, REQ, código o Zonal..." oninput="window.aplicarFiltroBuscador()">
+            </div>
+
+            <div class="control-group">
+                <label for="filterPending" style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-top: 25px; font-weight: 600; color: #ef4444;">
+                    <input type="checkbox" id="filterPending" onchange="window.aplicarFiltroBuscador()" style="cursor:pointer; width: 16px; height: 16px;">
+                    Pendientes sin REQ
+                </label>
+            </div>
+
+            <button class="btn-action btn-clear" onclick="borrarTodo()">Restablecer Panel</button>
+        </div>
+
+        <div class="table-container">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Acciones</th>
+                        <th class="centrado">Fecha Ejecución</th>
+                        <th>Cód. Tienda</th>
+                        <th>Tienda</th>
+                        <th>Responsable Zonal</th>
+                        <th class="centrado">N° REQ</th>
+                        <th class="centrado" style="min-width: 160px;">N° Cotización</th>
+                        <th>Observaciones</th>
+                        <th class="centrado">Realizado</th>
+                        <th class="centrado">Cot. Enviadas</th>
+                        <th class="centrado">Cierre</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td colspan="11" class="empty-state">Cargando base de datos...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- VISTA 2: DASHBOARD DE COTIZACIONES -->
+    <div id="vistaDashboard" style="display: none;">
+        
+        <!-- Tarjetas KPIs -->
+        <div class="kpi-container">
+            <div class="kpi-card b-blue">
+                <div class="kpi-title">Total Cotizaciones (Equipos)</div>
+                <div class="kpi-value" id="kpiTotal">0</div>
+            </div>
+            <div class="kpi-card b-yellow">
+                <div class="kpi-title">Pendientes de OC</div>
+                <div class="kpi-value" id="kpiPendientes" style="color: #d97706;">0</div>
+            </div>
+            <div class="kpi-card b-indigo">
+                <div class="kpi-title">Con OC (Pend. Ejecutar)</div>
+                <div class="kpi-value" id="kpiConOC" style="color: #4f46e5;">0</div>
+            </div>
+            <div class="kpi-card b-green">
+                <div class="kpi-title">Trabajos Ejecutados</div>
+                <div class="kpi-value" id="kpiEjecutadas" style="color: var(--success);">0</div>
+            </div>
+        </div>
+
+        <!-- Filtro Dashboard -->
+        <div class="control-panel" style="margin-bottom: 20px; align-items: center; padding: 12px 24px;">
+            <div class="control-group" style="flex: 1; flex-direction: row; align-items: center; gap: 15px;">
+                <label style="margin: 0; white-space: nowrap;">Filtro Rápido:</label>
+                <input type="text" id="dashSearchInput" class="search-input" style="flex: 1;" placeholder="Filtrar por código, tienda, equipo o N° cotización..." oninput="window.filtrarDashboard()">
+            </div>
+            <button class="btn-action" style="background-color: var(--secondary);" onclick="cargarDashboardCotizaciones()">🔄 Actualizar Datos</button>
+        </div>
+
+        <!-- Tabla Dashboard -->
+        <div class="table-container" style="max-height: calc(100vh - 350px);">
+            <table id="dashTable">
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">Cód. Local</th>
+                        <th>Nombre Tienda</th>
+                        <th>Equipo Asignado</th>
+                        <th>N° Cotización</th>
+                        <th>Monto</th>
+                        <th class="centrado">Fecha</th>
+                        <th class="centrado">Estado de Proceso</th>
+                    </tr>
+                </thead>
+                <tbody id="dashTableBody">
+                    <tr><td colspan="7" class="empty-state">Cargando dashboard...</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
+<!-- MODAL FICHA GENERAL DE SERVICIO -->
 <div id="fichaModal" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">Ficha de Servicio - Local <span id="modCodTiendaTitulo"></span></div>
         
         <div class="modal-grid">
-            <div><strong>Fecha de Inicio</strong> <span id="modFecha"></span></div>
-            <div><strong>Nombre Tienda</strong> <span id="modTienda"></span></div>
+            <div>
+                <strong>Fecha de Ejecución</strong> 
+                <input type="date" id="modFechaInput" class="equipo-input" style="width: 100%; margin-top: 4px; box-sizing: border-box;" title="Reprogramar fecha del servicio">
+            </div>
+            <div><strong>Nombre Tienda</strong> <span id="modTienda" style="display:block; margin-top: 10px;"></span></div>
             <div><strong>Responsable Zonal</strong> <span id="modZonal"></span></div>
             <div><strong>Mes Operativo</strong> <span id="modMes"></span></div>
         </div>
@@ -264,19 +388,30 @@
             <div class="toggle-wrap">Cierre: <label class="toggle-switch"><input type="checkbox" id="modCierre"><span class="slider"></span></label></div>
         </div>
 
+        <div id="fichaEquiposInfo" style="display: none; background: #fffbeb; border: 1px solid #fde68a; padding: 12px; border-radius: 8px; font-size: 0.85rem; flex-direction: column; gap: 10px;">
+            <div id="fichaCotPendientesContainer" style="display: none;">
+                <strong style="color: #b45309; display: block; margin-bottom: 4px;">⚠️ Cotizaciones Pendientes de Equipos (Sin OC):</strong>
+                <div id="fichaCotPendientesList" style="color: #92400e;"></div>
+            </div>
+            <div id="fichaObsEquiposContainer" style="display: none;">
+                <strong style="color: #b45309; display: block; margin-bottom: 4px;">📝 Observaciones Importantes de Equipos:</strong>
+                <div id="fichaObsEquiposList" style="color: #92400e; line-height: 1.4;"></div>
+            </div>
+        </div>
+
         <div class="modal-field">
-            <label>N° REQ (Requerimiento)</label>
+            <label>N° REQ (Requerimiento del Servicio)</label>
             <textarea id="modReq" class="modal-textarea" rows="1" placeholder="Ej: R-001"></textarea>
         </div>
         
         <div class="modal-field">
-            <label>N° Cotización(es)</label>
+            <label>N° Cotización(es) Generales del Servicio</label>
             <textarea id="modCot" class="modal-textarea" rows="1" placeholder="Ej: 1234, 5678"></textarea>
         </div>
 
         <div class="modal-field">
-            <label>Observaciones del Servicio</label>
-            <textarea id="modObs" class="modal-textarea" rows="3" placeholder="Agrega notas o detalles importantes..."></textarea>
+            <label>Observaciones Puntuales de la Visita</label>
+            <textarea id="modObs" class="modal-textarea" rows="3" placeholder="Agrega un dato puntual, notas de la visita, incidentes..."></textarea>
         </div>
 
         <div class="modal-actions">
@@ -286,10 +421,38 @@
     </div>
 </div>
 
+<!-- LISTA AUTOCOMPLETABLE DE TÉCNICOS -->
+<datalist id="listaTecnicos">
+    <option value="Julio Fuentes">
+    <option value="Katherine">
+    <option value="Elizabeth">
+    <option value="Walter">
+</datalist>
+
+<!-- MODAL GESTIÓN DE EQUIPOS DETALLADO -->
+<div id="equiposModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 800px; width: 95%;">
+        <div class="modal-header">Gestión de Equipos - Local <span id="eqCodTiendaTitulo"></span></div>
+        
+        <div class="add-equipo-container">
+            <input type="text" id="nuevoEquipoInput" class="search-input" style="flex: 1; min-width: auto;" placeholder="Ej: Horno, Visicooler, Amasadora..." onkeypress="if(event.key === 'Enter') window.agregarEquipo()">
+            <button class="btn-add" onclick="window.agregarEquipo()">+ Agregar Equipo</button>
+        </div>
+
+        <div id="equiposContainer" class="equipos-list">
+            <!-- Las tarjetas de equipos se renderizan dinámicamente -->
+        </div>
+
+        <div class="modal-actions" style="margin-top: 20px;">
+            <button class="btn-modal btn-cancel" onclick="cerrarEquipos()">Cerrar</button>
+            <button id="btnGuardarEquipos" class="btn-modal btn-save" onclick="guardarEquipos()">Guardar Cambios</button>
+        </div>
+    </div>
+</div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc, collection, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-    // IMPORTAMOS AUTHENTICATION
+    import { getFirestore, doc, setDoc, getDoc, collection, deleteDoc, onSnapshot, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
     const firebaseConfig = {
@@ -303,15 +466,30 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const auth = getAuth(app); // INICIALIZAMOS AUTH
+    const auth = getAuth(app); 
 
     let datosGlobales = [];
     let unsubsribeEstados = null;
 
+    // --- LÓGICA NAVEGACIÓN TABS ---
+    window.cambiarVista = function(vista) {
+        if(vista === 'panel') {
+            document.getElementById('vistaPanel').style.display = 'block';
+            document.getElementById('vistaDashboard').style.display = 'none';
+            document.getElementById('tabBtnPanel').classList.add('active');
+            document.getElementById('tabBtnDash').classList.remove('active');
+        } else {
+            document.getElementById('vistaPanel').style.display = 'none';
+            document.getElementById('vistaDashboard').style.display = 'block';
+            document.getElementById('tabBtnDash').classList.add('active');
+            document.getElementById('tabBtnPanel').classList.remove('active');
+            window.cargarDashboardCotizaciones(); // Refrescar datos al entrar
+        }
+    };
+
     // --- LÓGICA DE SESIÓN ---
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            // Usuario logueado: Muestra el panel y oculta el login
             document.getElementById('loginContainer').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'block';
             document.getElementById('btnLogout').style.display = 'block';
@@ -326,10 +504,8 @@
                     document.getElementById('fileLabel').innerHTML = "1. Archivo Activo en Nube";
                     actualizarSelectorMeses(datosGlobales);
                     
-                    // LÓGICA: SELECCIONAR SIEMPRE EL ÚLTIMO MES CARGADO
                     const mesesUnicos = [...new Set(datosGlobales.map(row => row.MES).filter(Boolean))];
                     if (mesesUnicos.length > 0) {
-                        // Tomamos siempre el último elemento del array de meses
                         const ultimoMesCargado = mesesUnicos[mesesUnicos.length - 1];
                         document.getElementById('monthSelect').value = ultimoMesCargado;
                     }
@@ -344,7 +520,6 @@
                 document.getElementById('fileLabel').innerHTML = "1. Error de conexión";
             }
         } else {
-            // Sin usuario: Muestra el login y oculta el panel
             document.getElementById('loginContainer').style.display = 'block';
             document.getElementById('mainContainer').style.display = 'none';
             document.getElementById('btnLogout').style.display = 'none';
@@ -359,8 +534,7 @@
         msjError.style.display = 'none';
         
         signInWithEmailAndPassword(auth, email, pass)
-            .then((userCredential) => {
-                // Éxito. Limpiar campos
+            .then(() => {
                 document.getElementById('txtEmail').value = '';
                 document.getElementById('txtPassword').value = '';
             })
@@ -372,16 +546,16 @@
 
     window.cerrarSesion = function() {
         signOut(auth).then(() => {
-            // Limpiar datos en memoria al salir
             datosGlobales = [];
             document.getElementById('tableBody').innerHTML = '<tr><td colspan="11" class="empty-state">Cargando base de datos...</td></tr>';
             document.getElementById('monthSelect').innerHTML = '<option value="">-- Sin datos --</option>';
             if (unsubsribeEstados) unsubsribeEstados();
+            // Reset vista al login
+            window.cambiarVista('panel'); 
         }).catch((error) => {
             console.error("Error al cerrar sesión:", error);
         });
     };
-    // ------------------------
 
     window.aplicarFiltroBuscador = function() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
@@ -428,33 +602,93 @@
         });
     }
 
+    // --- LÓGICA DE LA FICHA GENERAL ---
     window.fichaContext = { codTienda: null, mes: null };
 
-    window.abrirFicha = function(codTienda, fecha, tienda, zonal, mes) {
+    window.abrirFicha = async function(codTienda, fechaOrigStr, tienda, zonal, mes) {
         window.fichaContext = { codTienda, mes };
 
         document.getElementById('modCodTiendaTitulo').innerText = codTienda;
-        document.getElementById('modFecha').innerText = fecha;
         document.getElementById('modTienda').innerText = tienda;
         document.getElementById('modZonal').innerText = zonal;
         document.getElementById('modMes').innerText = mes;
-
-        const inReq = document.getElementById(`req_${codTienda}`);
-        const inCot = document.getElementById(`cot_${codTienda}`);
-        const inObs = document.getElementById(`obs_${codTienda}`);
-        const chkCotEnv = document.getElementById(`cotEnv_${codTienda}`);
-        const chkRealizado = document.getElementById(`realizado_${codTienda}`);
-        const chkCierre = document.getElementById(`cierre_${codTienda}`);
-
-        document.getElementById('modReq').value = inReq ? inReq.value : '';
-        document.getElementById('modCot').value = inCot ? inCot.value : '';
-        document.getElementById('modObs').value = inObs ? inObs.value : '';
+        document.getElementById('modFechaInput').value = '';
         
-        document.getElementById('modRealizado').checked = chkRealizado ? chkRealizado.checked : false;
-        document.getElementById('modCotEnv').checked = chkCotEnv ? chkCotEnv.checked : false;
-        document.getElementById('modCierre').checked = chkCierre ? chkCierre.checked : false;
+        document.getElementById('fichaEquiposInfo').style.display = 'none';
+        document.getElementById('fichaCotPendientesContainer').style.display = 'none';
+        document.getElementById('fichaObsEquiposContainer').style.display = 'none';
+        document.getElementById('fichaCotPendientesList').innerHTML = '';
+        document.getElementById('fichaObsEquiposList').innerHTML = '';
+        
+        try {
+            const docRef = doc(db, `estados_${mes}`, codTienda);
+            const docSnap = await getDoc(docRef);
+            let datosNube = docSnap.exists() ? docSnap.data() : {};
 
-        document.getElementById('fichaModal').style.display = 'flex';
+            const eqRef = doc(db, "equipos_locales", codTienda);
+            const eqSnap = await getDoc(eqRef);
+            let eqData = eqSnap.exists() ? eqSnap.data() : null;
+
+            if (eqData && eqData.Equipos) {
+                let cotHTML = '';
+                let obsHTML = '';
+
+                eqData.Equipos.forEach(eq => {
+                    if (eq.listaCotizaciones) {
+                        eq.listaCotizaciones.forEach(cot => {
+                            if (!cot.tieneOC && cot.numero && cot.numero.trim() !== '') {
+                                cotHTML += `<div style="margin-bottom:2px;">• ${cot.numero} <i>(${eq.nombre})</i></div>`;
+                            }
+                        });
+                    }
+                    if (eq.observaciones && eq.observaciones.trim() !== '') {
+                        obsHTML += `<div style="margin-bottom:4px;"><b>${eq.nombre}:</b> ${eq.observaciones}</div>`;
+                    }
+                });
+
+                let showInfo = false;
+                if (cotHTML !== '') {
+                    document.getElementById('fichaCotPendientesList').innerHTML = cotHTML;
+                    document.getElementById('fichaCotPendientesContainer').style.display = 'block';
+                    showInfo = true;
+                }
+                if (obsHTML !== '') {
+                    document.getElementById('fichaObsEquiposList').innerHTML = obsHTML;
+                    document.getElementById('fichaObsEquiposContainer').style.display = 'block';
+                    showInfo = true;
+                }
+                
+                if (showInfo) {
+                    document.getElementById('fichaEquiposInfo').style.display = 'flex';
+                }
+            }
+
+            let fechaParaInput = '';
+            if (datosNube.FechaModificada) {
+                fechaParaInput = datosNube.FechaModificada; 
+            } else {
+                let parts = fechaOrigStr.replace(/\//g, '-').split('-');
+                if (parts.length === 3) {
+                    if (parts[0].length <= 2 && parts[2].length === 4) {
+                        fechaParaInput = `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+                    } else if (parts[0].length === 4) {
+                        fechaParaInput = `${parts[0]}-${parts[1].padStart(2,'0')}-${parts[2].padStart(2,'0')}`;
+                    }
+                }
+            }
+            
+            document.getElementById('modFechaInput').value = fechaParaInput;
+            document.getElementById('modReq').value = datosNube.NumReq || '';
+            document.getElementById('modCot').value = datosNube.NumCot || '';
+            document.getElementById('modObs').value = datosNube.Observaciones || '';
+            document.getElementById('modRealizado').checked = !!datosNube.Realizado;
+            document.getElementById('modCotEnv').checked = !!datosNube.CotEnviadas;
+            document.getElementById('modCierre').checked = !!datosNube.Cierre;
+
+            document.getElementById('fichaModal').style.display = 'flex';
+        } catch(error) {
+            console.error("Error al abrir la ficha:", error);
+        }
     };
 
     window.cerrarFicha = function() {
@@ -464,6 +698,7 @@
     window.guardarFicha = async function() {
         const { codTienda, mes } = window.fichaContext;
         
+        const nFecha = document.getElementById('modFechaInput').value; 
         const nReq = document.getElementById('modReq').value;
         const nCot = document.getElementById('modCot').value;
         const nObs = document.getElementById('modObs').value;
@@ -474,6 +709,7 @@
         try {
             const docRef = doc(db, `estados_${mes}`, codTienda);
             await setDoc(docRef, {
+                FechaModificada: nFecha, 
                 NumReq: nReq,
                 NumCot: nCot,
                 Observaciones: nObs,
@@ -483,6 +719,7 @@
             }, { merge: true });
             
             cerrarFicha();
+            procesarDatos(); 
         } catch(error) {
             console.error("Error al guardar ficha:", error);
             alert("Hubo un error de conexión al guardar los cambios.");
@@ -512,7 +749,6 @@
                 document.getElementById('fileLabel').innerHTML = "1. Archivo Cargado con Éxito";
                 actualizarSelectorMeses(datosGlobales);
                 
-                // Si hay meses nuevos, selecciona automáticamente el último mes cargado
                 if (nuevosMeses.length > 0) {
                     const ultimoMesCargado = nuevosMeses[nuevosMeses.length - 1];
                     document.getElementById('monthSelect').value = ultimoMesCargado;
@@ -559,7 +795,20 @@
 
         let datosFiltrados = datosGlobales.filter(row => row.MES === mesSeleccionado && row.TIENDA);
         
-        const parseDate = (fechaStr) => {
+        let estadosMap = {};
+        let equiposMap = {}; 
+        
+        try {
+            const querySnapshot = await getDocs(collection(db, `estados_${mesSeleccionado}`));
+            querySnapshot.forEach(doc => { estadosMap[doc.id] = doc.data(); });
+            
+            const equiposSnapshot = await getDocs(collection(db, "equipos_locales"));
+            equiposSnapshot.forEach(doc => { equiposMap[doc.id] = doc.data(); });
+        } catch(e) { 
+            console.error("Error al consultar base de datos", e); 
+        }
+
+        const parseDateMs = (fechaStr) => {
             if (!fechaStr) return 0;
             if (typeof fechaStr === 'number') return fechaStr;
             let str = fechaStr.toString().trim();
@@ -574,7 +823,22 @@
             return new Date(str).getTime() || 0;
         };
 
-        datosFiltrados.sort((a, b) => parseDate(a['FECHA INICIO']) - parseDate(b['FECHA INICIO']));
+        datosFiltrados.forEach(row => {
+            const cod = row['CÓDIGO TIENDA'];
+            row._sortMs = parseDateMs(row['FECHA INICIO']); 
+            row._hasModDate = false;
+
+            if (estadosMap[cod] && estadosMap[cod].FechaModificada) {
+                const parts = estadosMap[cod].FechaModificada.split('-'); 
+                if (parts.length === 3) {
+                    row._sortMs = new Date(parts[0], parts[1]-1, parts[2]).getTime();
+                    row._hasModDate = true;
+                    row._modDateStr = estadosMap[cod].FechaModificada; 
+                }
+            }
+        });
+
+        datosFiltrados.sort((a, b) => a._sortMs - b._sortMs);
         
         const escaparTextos = (texto) => (texto || '').toString().replace(/'/g, "\\'");
 
@@ -593,22 +857,50 @@
             const tiendaStr = escaparTextos(row['TIENDA']);
             const zonalStr = escaparTextos(row['JEFE ZONAL']);
 
-            const timestamp = parseDate(row['FECHA INICIO']);
-            tr.setAttribute('data-fecha', timestamp);
+            tr.setAttribute('data-fecha', row._sortMs);
+
+            let displayModDate = '';
+            let styleOrigDate = 'color: var(--primary); font-size: 0.85rem;';
+            
+            if (row._hasModDate) {
+                displayModDate = row._modDateStr.split('-').reverse().join('-');
+                styleOrigDate = 'text-decoration: line-through; color: #94a3b8; font-weight: normal; font-size: 0.75rem;';
+            }
+
+            let cotPendientesHTML = '';
+            if (equiposMap[codTienda] && equiposMap[codTienda].Equipos) {
+                equiposMap[codTienda].Equipos.forEach(eq => {
+                    if (eq.listaCotizaciones) {
+                        eq.listaCotizaciones.forEach(cot => {
+                            if (!cot.tieneOC && cot.numero && cot.numero.trim() !== '') {
+                                cotPendientesHTML += `<div style="margin-bottom:2px; font-weight:600;">• ${cot.numero} <span style="font-weight:400; font-style:italic;">(${eq.nombre})</span></div>`;
+                            }
+                        });
+                    }
+                });
+            }
+            const displayCotStyle = cotPendientesHTML ? 'block' : 'none';
 
             tr.innerHTML = `
-                <td class="centrado">
+                <td class="centrado" style="display: flex; gap: 4px; justify-content: center; align-items: center;">
                     <button class="btn-ficha" onclick="window.abrirFicha('${codTienda}', '${fechaStr}', '${tiendaStr}', '${zonalStr}', '${mesSeleccionado}')">📝 Ficha</button>
+                    <button class="btn-equipos" onclick="window.abrirEquipos('${codTienda}', '${mesSeleccionado}')">🔧 Equipos</button>
                 </td>
-                <td class="fw-bold">${row['FECHA INICIO'] || ''}</td>
+                <td class="centrado">
+                    <div id="disp_fecha_orig_${codTienda}" class="fw-bold" style="${styleOrigDate}">${row['FECHA INICIO'] || ''}</div>
+                    <div id="disp_fecha_mod_${codTienda}" class="fw-bold" style="font-size: 0.85rem; color: var(--secondary); display: ${row._hasModDate ? 'block' : 'none'};">${displayModDate}</div>
+                </td>
                 <td>${codTienda}</td>
                 <td>${row['TIENDA'] || ''}</td>
                 <td>${row['JEFE ZONAL'] || ''}</td>
                 <td class="centrado">
                     <textarea id="req_${codTienda}" class="input-manual" rows="1" onchange="window.guardarCampoManual(this, 'NumReq', '${codTienda}', '${mesSeleccionado}')"></textarea>
                 </td>
-                <td class="centrado">
-                    <textarea id="cot_${codTienda}" class="input-manual" rows="1" onchange="window.guardarCampoManual(this, 'NumCot', '${codTienda}', '${mesSeleccionado}')"></textarea>
+                <td class="centrado" style="min-width: 160px; vertical-align: top;">
+                    <div id="equipos_cot_${codTienda}" style="font-size: 0.75rem; color: #b45309; background: #fef3c7; border: 1px solid #fde68a; border-radius: 4px; padding: 4px; margin-bottom: 4px; display: ${displayCotStyle}; text-align: left; line-height: 1.2; max-height: 80px; overflow-y: auto;">
+                        ${cotPendientesHTML}
+                    </div>
+                    <textarea id="cot_${codTienda}" class="input-manual" rows="1" style="width: 100%;" onchange="window.guardarCampoManual(this, 'NumCot', '${codTienda}', '${mesSeleccionado}')" placeholder="Otras cotiz..."></textarea>
                 </td>
                 <td>
                     <textarea id="obs_${codTienda}" class="input-manual input-obs" rows="1" onchange="window.guardarCampoManual(this, 'Observaciones', '${codTienda}', '${mesSeleccionado}')"></textarea>
@@ -650,6 +942,8 @@
                 const inputReq = document.getElementById(`req_${codTienda}`);
                 const inputCot = document.getElementById(`cot_${codTienda}`);
                 const inputObs = document.getElementById(`obs_${codTienda}`); 
+                const dispOrig = document.getElementById(`disp_fecha_orig_${codTienda}`);
+                const dispMod = document.getElementById(`disp_fecha_mod_${codTienda}`);
 
                 if (chkRealizado) chkRealizado.checked = !!datosNube.Realizado;
                 if (chkCotEnv) chkCotEnv.checked = !!datosNube.CotEnviadas;
@@ -658,6 +952,30 @@
                 if (inputReq && document.activeElement !== inputReq) inputReq.value = datosNube.NumReq || '';
                 if (inputCot && document.activeElement !== inputCot) inputCot.value = datosNube.NumCot || '';
                 if (inputObs && document.activeElement !== inputObs) inputObs.value = datosNube.Observaciones || '';
+                
+                if (dispOrig && dispMod) {
+                    if (datosNube.FechaModificada) {
+                        dispOrig.style.textDecoration = 'line-through';
+                        dispOrig.style.color = '#94a3b8';
+                        dispOrig.style.fontWeight = 'normal';
+                        dispOrig.style.fontSize = '0.75rem';
+                        
+                        dispMod.style.display = 'block';
+                        dispMod.innerText = datosNube.FechaModificada.split('-').reverse().join('-');
+                        
+                        const parts = datosNube.FechaModificada.split('-');
+                        const modDate = new Date(parts[0], parts[1]-1, parts[2]).getTime();
+                        dispOrig.closest('tr').setAttribute('data-fecha', modDate);
+                    } else {
+                        dispOrig.style.textDecoration = 'none';
+                        dispOrig.style.color = 'var(--primary)';
+                        dispOrig.style.fontWeight = 'bold';
+                        dispOrig.style.fontSize = '0.85rem';
+                        
+                        dispMod.style.display = 'none';
+                        dispMod.innerText = '';
+                    }
+                }
             });
             window.aplicarFiltroBuscador();
         });
@@ -684,7 +1002,6 @@
         if (confirm("ATENCIÓN: ¿Está seguro que desea limpiar el archivo general de Firebase?")) {
             try {
                 if (unsubsribeEstados) unsubsribeEstados(); 
-                // Al limpiar borramos la caché global
                 await deleteDoc(doc(db, "sistema", "datosGlobales"));
                 
                 datosGlobales = [];
@@ -697,6 +1014,412 @@
             }
         }
     }
+
+    // --- LÓGICA DEL DASHBOARD DE COTIZACIONES ---
+    window.cargarDashboardCotizaciones = async function() {
+        const tbody = document.getElementById('dashTableBody');
+        tbody.innerHTML = '<tr><td colspan="7" class="centrado">Extrayendo datos de los equipos...</td></tr>';
+
+        // 1. Mapeamos los nombres de tienda basados en el Excel (datosGlobales)
+        let mapTiendas = {};
+        datosGlobales.forEach(row => {
+            if(row['CÓDIGO TIENDA'] && row['TIENDA']) {
+                mapTiendas[row['CÓDIGO TIENDA']] = row['TIENDA'];
+            }
+        });
+
+        let arrayCotizaciones = [];
+        let total = 0, pendientes = 0, conOC = 0, ejecutadas = 0;
+
+        try {
+            // 2. Extraer colección global de equipos_locales
+            const querySnapshot = await getDocs(collection(db, "equipos_locales"));
+            
+            querySnapshot.forEach(doc => {
+                const codTienda = doc.id;
+                const nombreTienda = mapTiendas[codTienda] || 'Sin Registro en Planificación';
+                const data = doc.data();
+
+                if(data.Equipos && data.Equipos.length > 0) {
+                    data.Equipos.forEach(eq => {
+                        if(eq.listaCotizaciones && eq.listaCotizaciones.length > 0) {
+                            eq.listaCotizaciones.forEach(cot => {
+                                // Ignorar si son cotizaciones completamente vacías
+                                if(!cot.numero && !cot.monto) return;
+
+                                total++;
+                                if(cot.realizado) ejecutadas++;
+                                else if(cot.tieneOC) conOC++;
+                                else pendientes++;
+
+                                arrayCotizaciones.push({
+                                    codTienda,
+                                    nombreTienda,
+                                    equipo: eq.nombre,
+                                    numero: cot.numero || 'S/N',
+                                    monto: cot.monto || '-',
+                                    fecha: cot.fecha ? cot.fecha.split('-').reverse().join('-') : '-',
+                                    tieneOC: cot.tieneOC,
+                                    realizado: cot.realizado
+                                });
+                            });
+                        }
+                    });
+                }
+            });
+
+            // 3. Imprimir KPIs
+            document.getElementById('kpiTotal').innerText = total;
+            document.getElementById('kpiPendientes').innerText = pendientes;
+            document.getElementById('kpiConOC').innerText = conOC;
+            document.getElementById('kpiEjecutadas').innerText = ejecutadas;
+
+            // 4. Dibujar Tabla
+            tbody.innerHTML = '';
+            if(arrayCotizaciones.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="centrado empty-state">Aún no hay cotizaciones registradas en los equipos.</td></tr>';
+                return;
+            }
+
+            // Ordenamos alfabéticamente por código de tienda por defecto
+            arrayCotizaciones.sort((a,b) => a.codTienda.localeCompare(b.codTienda));
+
+            arrayCotizaciones.forEach(cot => {
+                let badgeHTML = '';
+                if(cot.realizado) {
+                    badgeHTML = '<span class="badge badge-done">✔️ Ejecutada</span>';
+                } else if(cot.tieneOC) {
+                    badgeHTML = '<span class="badge badge-oc">📄 Con OC</span>';
+                } else {
+                    badgeHTML = '<span class="badge badge-pending">⏳ Pendiente OC</span>';
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold" style="color: var(--primary);">${cot.codTienda}</td>
+                    <td style="font-size: 0.8rem;">${cot.nombreTienda}</td>
+                    <td style="font-size: 0.8rem;">🔧 ${cot.equipo}</td>
+                    <td class="fw-bold">${cot.numero}</td>
+                    <td>${cot.monto !== '-' ? '$' + cot.monto : '-'}</td>
+                    <td class="centrado">${cot.fecha}</td>
+                    <td class="centrado">${badgeHTML}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            // Re-aplicar filtro por si hay algo escrito en el buscador
+            window.filtrarDashboard();
+
+        } catch(e) {
+            console.error(e);
+            tbody.innerHTML = '<tr><td colspan="7" class="centrado empty-state" style="color: #ef4444;">Ocurrió un error al cargar el Dashboard.</td></tr>';
+        }
+    };
+
+    window.filtrarDashboard = function() {
+        const searchTerm = document.getElementById('dashSearchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#dashTableBody tr');
+
+        rows.forEach(row => {
+            if(row.querySelector('.empty-state')) return;
+            const textContent = row.textContent.toLowerCase();
+            row.style.display = textContent.includes(searchTerm) ? '' : 'none';
+        });
+    };
+
+    // --- LÓGICA DE LA VENTANA DE EQUIPOS ---
+    window.equiposContext = { codTienda: null, mes: null, lista: [] };
+    window.equiposExpandedState = {}; 
+
+    window.abrirEquipos = async function(codTienda, mes) {
+        window.equiposContext = { codTienda, mes, lista: [] };
+        window.equiposExpandedState = {}; 
+        document.getElementById('eqCodTiendaTitulo').innerText = codTienda;
+        document.getElementById('equiposContainer').innerHTML = '<div class="empty-state">Consultando base de datos...</div>';
+        document.getElementById('equiposModal').style.display = 'flex';
+
+        try {
+            let equiposBD = null;
+
+            const docRefGlobal = doc(db, "equipos_locales", codTienda);
+            const docSnapGlobal = await getDoc(docRefGlobal);
+            
+            if (docSnapGlobal.exists() && docSnapGlobal.data().Equipos) {
+                equiposBD = docSnapGlobal.data().Equipos;
+            } else {
+                const docRefMes = doc(db, `estados_${mes}`, codTienda);
+                const docSnapMes = await getDoc(docRefMes);
+                if (docSnapMes.exists() && docSnapMes.data().Equipos) {
+                    equiposBD = docSnapMes.data().Equipos;
+                }
+            }
+            
+            if (equiposBD) {
+                window.equiposContext.lista = equiposBD.map(eq => {
+                    if (typeof eq === 'string') {
+                        return { nombre: eq, serie: '', observaciones: '', historial: [], listaCotizaciones: [] };
+                    }
+                    if (!eq.historial) eq.historial = []; 
+                    if (!eq.listaCotizaciones) {
+                        eq.listaCotizaciones = [];
+                        if (eq.cotizaciones && eq.cotizaciones.trim() !== '') {
+                            eq.listaCotizaciones.push({ numero: eq.cotizaciones, monto: '', fecha: '', tieneOC: false, realizado: false });
+                            eq.cotizaciones = ''; 
+                        }
+                    }
+                    return eq; 
+                });
+            }
+            window.renderizarEquipos();
+        } catch (error) {
+            console.error("Error al obtener equipos:", error);
+            document.getElementById('equiposContainer').innerHTML = '<div class="empty-state" style="color: #ef4444;">Error de conexión.</div>';
+        }
+    };
+
+    window.cerrarEquipos = function() {
+        document.getElementById('equiposModal').style.display = 'none';
+        document.getElementById('nuevoEquipoInput').value = '';
+    };
+
+    window.toggleEquipoDetalle = function(index, isOpen) {
+        window.equiposExpandedState[index] = isOpen;
+    };
+
+    window.renderizarEquipos = function() {
+        const container = document.getElementById('equiposContainer');
+        container.innerHTML = '';
+        
+        if (window.equiposContext.lista.length === 0) {
+            container.innerHTML = '<div class="empty-state" style="padding: 20px;">No hay equipos registrados para este local. Agrega uno arriba.</div>';
+            return;
+        }
+
+        window.equiposContext.lista.forEach((equipo, index) => {
+            const isOpen = window.equiposExpandedState[index] ? 'open' : '';
+
+            let historialHTML = '';
+            if (equipo.historial && equipo.historial.length > 0) {
+                equipo.historial.forEach((h, hIndex) => {
+                    historialHTML += `
+                        <div class="historial-item">
+                            <div class="historial-item-header">
+                                <span>📅 ${h.fecha} | 👷 ${h.tecnico}</span>
+                                <button class="btn-del-hist" onclick="window.eliminarRegistroHistorial(${index}, ${hIndex})">Eliminar</button>
+                            </div>
+                            <div>${h.detalle}</div>
+                        </div>
+                    `;
+                });
+            } else {
+                historialHTML = '<div style="font-size: 0.75rem; color: #94a3b8; font-style: italic;">Sin intervenciones registradas.</div>';
+            }
+
+            let cotizacionesHTML = '';
+            if (equipo.listaCotizaciones && equipo.listaCotizaciones.length > 0) {
+                equipo.listaCotizaciones.forEach((cot, cIndex) => {
+                    cotizacionesHTML += `
+                        <div class="cot-item">
+                            <div class="cot-grid-info">
+                                <input type="text" class="equipo-input" value="${cot.numero || ''}" placeholder="N° o Detalle de Cot." onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'numero', this.value)">
+                                <input type="text" class="equipo-input" value="${cot.monto || ''}" placeholder="Monto ($)" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'monto', this.value)">
+                                <input type="date" class="equipo-input" value="${cot.fecha || ''}" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'fecha', this.value)" title="Fecha de emisión">
+                                <button class="btn-del-hist" onclick="window.eliminarCotizacion(${index}, ${cIndex})">Borrar</button>
+                            </div>
+                            <div class="cot-grid-checks">
+                                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                                    <input type="checkbox" style="width:16px; height:16px; cursor:pointer;" ${cot.tieneOC ? 'checked' : ''} onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'tieneOC', this.checked)"> Tiene OC
+                                </label>
+                                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                                    <input type="checkbox" style="width:16px; height:16px; cursor:pointer;" ${cot.realizado ? 'checked' : ''} onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'realizado', this.checked)"> Ejecutado
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                cotizacionesHTML = '<div style="font-size: 0.75rem; color: #94a3b8; font-style: italic;">No hay cotizaciones pendientes.</div>';
+            }
+
+            const detailsObj = document.createElement('details');
+            detailsObj.className = 'equipo-card';
+            if (isOpen) detailsObj.setAttribute('open', 'open');
+            
+            detailsObj.addEventListener('toggle', (e) => {
+                window.toggleEquipoDetalle(index, detailsObj.open);
+            });
+            
+            detailsObj.innerHTML = `
+                <summary>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <span>🔧 ${equipo.nombre}</span>
+                        ${equipo.listaCotizaciones && equipo.listaCotizaciones.length > 0 ? `<span style="background:#f59e0b; color:white; font-size:0.65rem; padding:2px 6px; border-radius:10px;">${equipo.listaCotizaciones.length} Cot.</span>` : ''}
+                    </div>
+                    <span class="equipo-summary-icon">▼</span>
+                </summary>
+                
+                <div class="equipo-content">
+                    <div class="equipo-grid">
+                        <div class="equipo-field">
+                            <label>N° de Serie / Modelo</label>
+                            <input type="text" class="equipo-input" value="${equipo.serie || ''}" onchange="window.actualizarCampoEquipo(${index}, 'serie', this.value)" placeholder="Ej: SN-987654321">
+                        </div>
+                    </div>
+                    
+                    <div class="equipo-field">
+                        <label>Observaciones Generales</label>
+                        <textarea class="equipo-textarea" rows="2" onchange="window.actualizarCampoEquipo(${index}, 'observaciones', this.value)" placeholder="Estado físico del equipo, notas de precaución...">${equipo.observaciones || ''}</textarea>
+                    </div>
+                    
+                    <!-- SECCIÓN COTIZACIONES -->
+                    <div class="cot-section">
+                        <div class="historial-title">💰 Seguimiento de Cotizaciones</div>
+                        <div class="historial-list">
+                            ${cotizacionesHTML}
+                        </div>
+                        <button class="btn-add-hist" style="background: #10b981; margin-top:5px;" onclick="window.agregarCotizacion(${index})">+ Añadir Cotización</button>
+                    </div>
+
+                    <!-- SECCIÓN HISTORIAL -->
+                    <div class="historial-section">
+                        <div class="historial-title">📋 Bitácora de Mantenimiento</div>
+                        <div class="historial-list">
+                            ${historialHTML}
+                        </div>
+                        <div class="add-hist-grid">
+                            <input type="date" id="h_fecha_${index}" class="equipo-input">
+                            <input type="text" id="h_tecnico_${index}" class="equipo-input" list="listaTecnicos" placeholder="Técnico a cargo">
+                            <input type="text" id="h_detalle_${index}" class="equipo-input" placeholder="Detalle de intervención..." onkeypress="if(event.key === 'Enter') window.agregarRegistroHistorial(${index})">
+                            <button class="btn-add-hist" onclick="window.agregarRegistroHistorial(${index})">Registrar</button>
+                        </div>
+                    </div>
+
+                    <!-- BOTÓN ELIMINAR EQUIPO -->
+                    <button class="btn-remove" onclick="window.eliminarEquipo(${index})">🗑️ Eliminar Equipo Completo</button>
+                </div>
+            `;
+            container.appendChild(detailsObj);
+        });
+    };
+
+    window.agregarEquipo = function() {
+        const input = document.getElementById('nuevoEquipoInput');
+        const nuevoNombreEquipo = input.value.trim();
+        
+        if (nuevoNombreEquipo !== '') {
+            window.equiposContext.lista.unshift({ 
+                nombre: nuevoNombreEquipo,
+                serie: '',
+                observaciones: '',
+                historial: [],
+                listaCotizaciones: []
+            });
+            window.equiposExpandedState[0] = true; 
+            input.value = '';
+            input.focus();
+            window.renderizarEquipos();
+        }
+    };
+
+    window.actualizarCampoEquipo = function(index, campo, valor) {
+        if (window.equiposContext.lista[index]) {
+            window.equiposContext.lista[index][campo] = valor;
+        }
+    };
+
+    window.eliminarEquipo = function(index) {
+        if(confirm("ATENCIÓN: ¿Estás seguro que deseas eliminar este equipo, sus cotizaciones y todo su historial de forma permanente?")) {
+            window.equiposContext.lista.splice(index, 1);
+            window.equiposExpandedState[index] = false;
+            window.renderizarEquipos();
+        }
+    };
+
+    // --- Funciones de Cotizaciones ---
+    window.agregarCotizacion = function(eqIndex) {
+        if (!window.equiposContext.lista[eqIndex].listaCotizaciones) {
+            window.equiposContext.lista[eqIndex].listaCotizaciones = [];
+        }
+        window.equiposContext.lista[eqIndex].listaCotizaciones.push({
+            numero: '',
+            monto: '',
+            fecha: '',
+            tieneOC: false,
+            realizado: false
+        });
+        window.equiposExpandedState[eqIndex] = true; 
+        window.renderizarEquipos();
+    };
+
+    window.actualizarCotizacion = function(eqIndex, cIndex, campo, valor) {
+        window.equiposContext.lista[eqIndex].listaCotizaciones[cIndex][campo] = valor;
+    };
+
+    window.eliminarCotizacion = function(eqIndex, cIndex) {
+        if(confirm("¿Seguro que deseas borrar esta cotización?")) {
+            window.equiposContext.lista[eqIndex].listaCotizaciones.splice(cIndex, 1);
+            window.renderizarEquipos();
+        }
+    };
+
+    // --- Funciones del Historial ---
+    window.agregarRegistroHistorial = function(eqIndex) {
+        const inFecha = document.getElementById(`h_fecha_${eqIndex}`);
+        const inTecnico = document.getElementById(`h_tecnico_${eqIndex}`);
+        const inDetalle = document.getElementById(`h_detalle_${eqIndex}`);
+
+        if (!inFecha.value || !inDetalle.value.trim()) {
+            alert("Para registrar en la bitácora, debes ingresar al menos la Fecha y el Detalle de la intervención.");
+            return;
+        }
+
+        const fechaInvertida = inFecha.value.split('-').reverse().join('-');
+
+        if (!window.equiposContext.lista[eqIndex].historial) {
+            window.equiposContext.lista[eqIndex].historial = [];
+        }
+
+        window.equiposContext.lista[eqIndex].historial.unshift({
+            fecha: fechaInvertida,
+            tecnico: inTecnico.value.trim() || 'Sin asignar',
+            detalle: inDetalle.value.trim()
+        });
+
+        window.renderizarEquipos(); 
+    };
+
+    window.eliminarRegistroHistorial = function(eqIndex, hIndex) {
+        if(confirm("¿Seguro que deseas borrar este registro de la bitácora?")) {
+            window.equiposContext.lista[eqIndex].historial.splice(hIndex, 1);
+            window.renderizarEquipos();
+        }
+    };
+
+    window.guardarEquipos = async function() {
+        const { codTienda, lista } = window.equiposContext; 
+        const btnGuardar = document.getElementById('btnGuardarEquipos');
+        
+        btnGuardar.innerText = 'Guardando...';
+        btnGuardar.disabled = true;
+
+        try {
+            const docRef = doc(db, "equipos_locales", codTienda);
+            await setDoc(docRef, { Equipos: lista }, { merge: true });
+            cerrarEquipos();
+            
+            procesarDatos(); 
+            // Refrescamos también el dashboard si estuviera activo de fondo
+            if(document.getElementById('vistaDashboard').style.display === 'block') {
+                window.cargarDashboardCotizaciones();
+            }
+        } catch(error) {
+            console.error("Error al guardar la lista de equipos:", error);
+            alert("No se pudieron guardar los equipos. Revisa tu conexión a internet.");
+        } finally {
+            btnGuardar.innerText = 'Guardar Cambios';
+            btnGuardar.disabled = false;
+        }
+    };
 </script>
 
 </body>
