@@ -883,10 +883,12 @@
             const displayCotStyle = cotPendientesHTML ? 'block' : 'none';
 
             tr.innerHTML = `
-                <td class="centrado" style="display: flex; gap: 4px; justify-content: center; align-items: center;">
-                    <button class="btn-ficha" onclick="window.abrirFicha('${codTienda}', '${fechaStr}', '${tiendaStr}', '${zonalStr}', '${mesSeleccionado}')">📝 Ficha</button>
-                    <button class="btn-equipos" onclick="window.abrirEquipos('${codTienda}', '${mesSeleccionado}')">🔧 Equipos</button>
-                </td>
+                <td class="centrado">
+    <div style="display: flex; gap: 4px; justify-content: center; align-items: center;">
+        <button class="btn-ficha" onclick="window.abrirFicha('${codTienda}', '${fechaStr}', '${tiendaStr}', '${zonalStr}', '${mesSeleccionado}')">📝 Ficha</button>
+        <button class="btn-equipos" onclick="window.abrirEquipos('${codTienda}', '${mesSeleccionado}')">🔧 Equipos</button>
+    </div>
+</td>
                 <td class="centrado">
                     <div id="disp_fecha_orig_${codTienda}" class="fw-bold" style="${styleOrigDate}">${row['FECHA INICIO'] || ''}</div>
                     <div id="disp_fecha_mod_${codTienda}" class="fw-bold" style="font-size: 0.85rem; color: var(--secondary); display: ${row._hasModDate ? 'block' : 'none'};">${displayModDate}</div>
