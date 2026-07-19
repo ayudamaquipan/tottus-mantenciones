@@ -108,7 +108,7 @@
         .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 2px solid #f1f5f9; }
         .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 1250px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; min-width: 1550px; } 
         th { background-color: var(--background); color: var(--text-muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; padding: 12px; border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 10; white-space: nowrap; box-shadow: 0 2px 2px -1px rgba(0,0,0,0.1); }
         td { padding: 8px 12px; border-bottom: 1px solid var(--border); font-size: 0.85rem; vertical-align: middle; }
         tr:hover td { background-color: #f1f5f9; }
@@ -122,6 +122,8 @@
 
         .btn-ficha { background-color: #e2e8f0; color: var(--primary); border: none; padding: 6px 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; white-space: nowrap; }
         .btn-ficha:hover { background-color: #cbd5e1; }
+        .btn-ficha-blue { background-color: var(--secondary); color: white; padding: 4px 8px; font-size: 0.75rem; border-radius: 4px; box-shadow: 0 2px 4px rgba(59,130,246,0.2); }
+        .btn-ficha-blue:hover { background-color: #2563eb; }
 
         .toggle-switch { position: relative; display: inline-block; width: 36px; height: 20px; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
@@ -145,7 +147,7 @@
         .badge-oc { background: #e0e7ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
         .badge-done { background: #d1fae5; color: #047857; border: 1px solid #a7f3d0; }
 
-        /* --- MODAL FICHA COMPLETA --- */
+        /* --- MODALES --- */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
         .modal-content { background: var(--surface); padding: 24px; border-radius: 10px; width: 90%; max-width: 650px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; gap: 16px; animation: fadeIn 0.2s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -156,7 +158,7 @@
         .modal-grid strong { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; display: block; margin-bottom: 2px; }
 
         .modal-field { display: flex; flex-direction: column; gap: 6px; }
-        .modal-field label { font-weight: 600; color: var(--text-main); font-size: 0.9rem; }
+        .modal-field label { font-weight: 600; color: var(--text-main); font-size: 0.85rem; }
         .modal-textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 0.9rem; resize: vertical; background-color: #fafafa; box-sizing: border-box; }
         
         .modal-toggles { display: flex; gap: 15px; padding: 8px 0; flex-wrap: wrap; justify-content: space-between; }
@@ -171,7 +173,7 @@
 
         .empty-state { padding: 40px; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
 
-        /* --- MODAL DE EQUIPOS (NUEVO DISEÑO ACORDEÓN) --- */
+        /* --- MODAL DE EQUIPOS --- */
         .equipos-list { display: flex; flex-direction: column; gap: 12px; max-height: 50vh; overflow-y: auto; margin-top: 15px; padding-right: 5px; }
         .equipos-list::-webkit-scrollbar { width: 6px; }
         .equipos-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
@@ -205,7 +207,7 @@
         .cot-section { margin-top: 5px; border-top: 1px dashed #cbd5e1; padding-top: 10px; }
         .cot-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 8px; }
         .cot-grid-info { display: grid; grid-template-columns: 1fr 100px 130px auto; gap: 8px; align-items: center; margin-bottom: 8px; }
-        .cot-grid-checks { display: flex; gap: 20px; font-weight: 600; color: var(--text-main); font-size: 0.8rem; align-items: center; background: #ffffff; padding: 6px 10px; border-radius: 4px; border: 1px solid #e2e8f0; }
+        .cot-grid-checks { display: flex; gap: 15px; font-weight: 600; color: var(--text-main); font-size: 0.75rem; align-items: center; background: #ffffff; padding: 6px 10px; border-radius: 4px; border: 1px solid #e2e8f0; flex-wrap: wrap; }
 
         /* --- ESTILOS DEL HISTORIAL DE EQUIPOS --- */
         .historial-section { margin-top: 10px; border-top: 1px dashed #cbd5e1; padding-top: 10px; }
@@ -257,7 +259,7 @@
         <button id="tabBtnDash" class="tab-btn" onclick="cambiarVista('dashboard')">📈 Dashboard Cotizaciones</button>
     </div>
 
-    <!-- VISTA 1: PANEL PRINCIPAL (EXISTENTE) -->
+    <!-- VISTA 1: PANEL PRINCIPAL -->
     <div id="vistaPanel">
         <div class="control-panel">
             <div class="control-group">
@@ -336,13 +338,23 @@
             </div>
         </div>
 
-        <!-- Filtro Dashboard -->
+        <!-- Filtro Dashboard MEJORADO -->
         <div class="control-panel" style="margin-bottom: 20px; align-items: center; padding: 12px 24px;">
-            <div class="control-group" style="flex: 1; flex-direction: row; align-items: center; gap: 15px;">
-                <label style="margin: 0; white-space: nowrap;">Filtro Rápido:</label>
-                <input type="text" id="dashSearchInput" class="search-input" style="flex: 1;" placeholder="Filtrar por código, tienda, equipo o N° cotización..." oninput="window.filtrarDashboard()">
+            <div class="control-group" style="flex: 1; flex-direction: row; align-items: center; gap: 15px; flex-wrap: wrap;">
+                
+                <label style="margin: 0; white-space: nowrap;">Filtro de Estado:</label>
+                <select id="dashStateFilter" style="min-width: 220px;" onchange="window.filtrarDashboard()">
+                    <option value="todos">Todos los estados</option>
+                    <option value="pendiente_oc">⏳ Pendiente de OC</option>
+                    <option value="con_oc">📄 Con OC (Pend. Ejecutar)</option>
+                    <option value="ejecutado">✔️ Ejecutado (Pend. Facturar)</option>
+                    <option value="facturado">💲 Facturado al 100%</option>
+                </select>
+
+                <label style="margin: 0; white-space: nowrap; margin-left: 10px;">Buscador Rápido:</label>
+                <input type="text" id="dashSearchInput" class="search-input" style="flex: 1; min-width: 200px;" placeholder="Filtrar por código, tienda, equipo, técnico..." oninput="window.filtrarDashboard()">
             </div>
-            <button class="btn-action" style="background-color: var(--secondary);" onclick="cargarDashboardCotizaciones()">🔄 Actualizar Datos</button>
+            <button class="btn-action" style="background-color: var(--secondary); white-space: nowrap;" onclick="cargarDashboardCotizaciones()">🔄 Actualizar Datos</button>
         </div>
 
         <!-- Tabla Dashboard -->
@@ -350,20 +362,94 @@
             <table id="dashTable">
                 <thead>
                     <tr>
-                        <th style="width: 100px;">Cód. Local</th>
-                        <th>Nombre Tienda</th>
-                        <th>Equipo Asignado</th>
-                        <th>N° Cotización</th>
-                        <th>Detalle</th> <!-- NUEVA COLUMNA -->
-                        <th>Monto</th>
-                        <th class="centrado">Fecha</th>
-                        <th class="centrado">Estado de Proceso</th>
+                        <th style="width: 70px;">Local</th>
+                        <th style="width: 140px;">Nombre Tienda</th>
+                        <th style="width: 110px;">Equipo</th>
+                        <th style="width: 90px;" class="centrado">Ver Modal</th>
+                        <th style="width: 140px;">Repuestos / Obs.</th>
+                        <th style="width: 110px;">Técnico Asig.</th> 
+                        <th class="centrado" style="width: 50px;" title="¿Tiene OC?">OC?</th>
+                        <th style="width: 90px;">N° OC</th>
+                        <th style="width: 120px;">N° Req. Instalación</th>
+                        <th style="width: 90px;">N° NV</th>
+                        <th style="width: 100px;">Fecha OC</th>
+                        <th style="width: 100px;">F. Ejecución</th>
+                        <th class="centrado" style="width: 50px;" title="¿Trabajo Ejecutado?">Listo</th>
+                        <th class="centrado" style="width: 50px;" title="¿Facturado?">Fact.</th>
+                        <th style="width: 100px;">F. Factura</th>
                     </tr>
                 </thead>
                 <tbody id="dashTableBody">
-                    <tr><td colspan="8" class="empty-state">Cargando dashboard...</td></tr>
+                    <tr><td colspan="15" class="empty-state">Cargando dashboard...</td></tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Controles de Paginación -->
+        <div id="dashPagination" style="display: none; justify-content: center; align-items: center; gap: 15px; margin-top: 15px;">
+            <button class="btn-action btn-cancel" onclick="window.cambiarPaginaDash(-1)">Anterior</button>
+            <span id="dashPageInfo" style="font-size: 0.9rem; font-weight: 600; color: var(--primary);">Página 1 de X</span>
+            <button class="btn-action" style="background: var(--secondary);" onclick="window.cambiarPaginaDash(1)">Siguiente</button>
+        </div>
+    </div>
+</div>
+
+<!-- NUEVO MODAL: EDICIÓN DE COTIZACIÓN DESDE DASHBOARD -->
+<div id="cotDashModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 550px;">
+        <div class="modal-header">Detalle de Cotización 📝</div>
+        <div class="modal-grid" style="margin-bottom: 5px; background: #e0e7ff; border-color: #c7d2fe;">
+            <div><strong>Local</strong> <span id="cdLocal" style="color: #3730a3; font-weight:bold;"></span></div>
+            <div><strong>Equipo Asignado</strong> <span id="cdEquipo" style="color: #3730a3;"></span></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
+            <div class="equipo-field">
+                <label>N° Cotización</label>
+                <div style="display: flex; gap: 4px;">
+                    <input type="text" id="cdNumero" class="equipo-input" placeholder="Ej: 9988" style="flex: 1;">
+                    <button class="btn-ficha-blue" style="padding: 6px 8px;" onclick="window.abrirFixeatCotizacion('cdNumero')" title="Buscar Cotización en FIXEAT">🔗</button>
+                </div>
+            </div>
+            <div class="equipo-field">
+                <label>Monto Cotizado ($)</label>
+                <input type="text" id="cdMonto" class="equipo-input" placeholder="Monto">
+            </div>
+        </div>
+
+        <div class="equipo-field" style="margin-top: 10px;">
+            <label>Repuestos u Observaciones</label>
+            <textarea id="cdDetalle" class="equipo-textarea" rows="2" placeholder="Detalle de repuestos, notas..."></textarea>
+        </div>
+
+        <!-- CUADRÍCULA DE DATOS TÉCNICOS Y FECHAS -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 15px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border);">
+            <div class="equipo-field"><label>Técnico Asignado</label><input type="text" id="cdTecnico" class="equipo-input" list="listaTecnicos" placeholder="Técnico a cargo"></div>
+            <div class="equipo-field"><label>N° OC</label><input type="text" id="cdOC" class="equipo-input" placeholder="Ej: OC-123"></div>
+            
+            <div class="equipo-field">
+                <label>N° Req. Instalación</label>
+                <div style="display: flex; gap: 4px;">
+                    <input type="text" id="cdReq" class="equipo-input" placeholder="Ej: REQ-456" style="flex: 1;">
+                    <button class="btn-ficha-blue" style="padding: 6px 8px;" onclick="window.abrirFixeat('cdReq')" title="Buscar en FIXEAT">🔗</button>
+                </div>
+            </div>
+
+            <div class="equipo-field"><label>N° NV (Nota Venta)</label><input type="text" id="cdNV" class="equipo-input" placeholder="Ej: NV-789"></div>
+            <div class="equipo-field"><label>Fecha Llegada OC</label><input type="date" id="cdFechaOC" class="equipo-input"></div>
+            <div class="equipo-field"><label>Fecha Ejecución</label><input type="date" id="cdFechaEjecucion" class="equipo-input"></div>
+            <div class="equipo-field"><label>Fecha Facturación</label><input type="date" id="cdFechaFacturacion" class="equipo-input"></div>
+        </div>
+
+        <div class="modal-toggles" style="margin-top: 15px; background: #f1f5f9; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div class="toggle-wrap">¿Tiene OC?: <label class="toggle-switch"><input type="checkbox" id="cdTieneOC"><span class="slider"></span></label></div>
+            <div class="toggle-wrap">¿Ejecutado?: <label class="toggle-switch"><input type="checkbox" id="cdRealizado"><span class="slider"></span></label></div>
+            <div class="toggle-wrap">¿Facturado?: <label class="toggle-switch"><input type="checkbox" id="cdFacturado"><span class="slider"></span></label></div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 10px;">
+            <button class="btn-modal btn-cancel" onclick="cerrarModalCotDash()">Cancelar</button>
+            <button id="btnGuardarCotDash" class="btn-modal btn-save" onclick="guardarModalCotDash()">Guardar Cambios</button>
         </div>
     </div>
 </div>
@@ -372,7 +458,6 @@
 <div id="fichaModal" class="modal-overlay">
     <div class="modal-content">
         <div class="modal-header">Ficha de Servicio - Local <span id="modCodTiendaTitulo"></span></div>
-        
         <div class="modal-grid">
             <div>
                 <strong>Fecha de Ejecución</strong> 
@@ -382,13 +467,11 @@
             <div><strong>Responsable Zonal</strong> <span id="modZonal"></span></div>
             <div><strong>Mes Operativo</strong> <span id="modMes"></span></div>
         </div>
-
         <div class="modal-toggles">
             <div class="toggle-wrap">Realizado: <label class="toggle-switch"><input type="checkbox" id="modRealizado"><span class="slider"></span></label></div>
             <div class="toggle-wrap">Cot. Enviadas: <label class="toggle-switch"><input type="checkbox" id="modCotEnv"><span class="slider"></span></label></div>
             <div class="toggle-wrap">Cierre: <label class="toggle-switch"><input type="checkbox" id="modCierre"><span class="slider"></span></label></div>
         </div>
-
         <div id="fichaEquiposInfo" style="display: none; background: #fffbeb; border: 1px solid #fde68a; padding: 12px; border-radius: 8px; font-size: 0.85rem; flex-direction: column; gap: 10px;">
             <div id="fichaCotPendientesContainer" style="display: none;">
                 <strong style="color: #b45309; display: block; margin-bottom: 4px;">⚠️ Cotizaciones Pendientes de Equipos (Sin OC):</strong>
@@ -399,20 +482,36 @@
                 <div id="fichaObsEquiposList" style="color: #92400e; line-height: 1.4;"></div>
             </div>
         </div>
-
+        
         <div class="modal-field">
             <label>N° REQ (Requerimiento del Servicio)</label>
-            <textarea id="modReq" class="modal-textarea" rows="1" placeholder="Ej: R-001"></textarea>
+            <div style="display: flex; gap: 8px;">
+                <textarea id="modReq" class="modal-textarea" rows="1" placeholder="Ej: R-001" style="flex: 1; margin: 0;"></textarea>
+                <button class="btn-action" style="background: var(--secondary); padding: 8px 12px; font-weight: 600; white-space: nowrap;" onclick="window.abrirFixeat('modReq')">🔗 Abrir en FIXEAT</button>
+            </div>
         </div>
-        
+
         <div class="modal-field">
             <label>N° Cotización(es) Generales del Servicio</label>
             <textarea id="modCot" class="modal-textarea" rows="1" placeholder="Ej: 1234, 5678"></textarea>
         </div>
-
         <div class="modal-field">
             <label>Observaciones Puntuales de la Visita</label>
             <textarea id="modObs" class="modal-textarea" rows="3" placeholder="Agrega un dato puntual, notas de la visita, incidentes..."></textarea>
+        </div>
+
+        <!-- NUEVA SECCIÓN: LINKS DE DESCARGA -->
+        <div style="margin-top: 15px; border-top: 1px dashed var(--border); padding-top: 15px;">
+            <label style="font-weight: 600; color: var(--text-main); font-size: 0.85rem; display: block; margin-bottom: 8px;">Links de Fichas de Servicio</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                <input type="text" id="nuevoNombreLink" class="equipo-input" placeholder="Nombre (Ej: Ficha Cierre)" style="flex: 1;">
+                <input type="url" id="nuevoUrlLink" class="equipo-input" placeholder="Pega el link de descarga aquí..." style="flex: 2;">
+                <button class="btn-action" style="background: var(--success); padding: 8px 12px; font-size: 0.8rem; font-weight: 600;" onclick="window.agregarLinkFicha()">+ Agregar Link</button>
+            </div>
+            
+            <div id="listaFichasLinks" style="display: flex; flex-direction: column; gap: 6px;">
+                <!-- Aquí aparecerán los links agregados -->
+            </div>
         </div>
 
         <div class="modal-actions">
@@ -432,7 +531,7 @@
 
 <!-- MODAL GESTIÓN DE EQUIPOS DETALLADO -->
 <div id="equiposModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 800px; width: 95%;">
+    <div class="modal-content" style="max-width: 850px; width: 95%;">
         <div class="modal-header">Gestión de Equipos - Local <span id="eqCodTiendaTitulo"></span></div>
         
         <div class="add-equipo-container">
@@ -471,6 +570,13 @@
 
     let datosGlobales = [];
     let unsubsribeEstados = null;
+    
+    // Variables para paginación y modal del Dashboard
+    window.dashDatosGlobales = [];
+    window.dashDatosFiltrados = [];
+    window.dashPaginaActual = 1;
+    window.dashItemsPorPagina = 50;
+    window.cotDashContext = { codTienda: null, eqIndex: null, cIndex: null };
 
     // --- LÓGICA NAVEGACIÓN TABS ---
     window.cambiarVista = function(vista) {
@@ -484,7 +590,7 @@
             document.getElementById('vistaDashboard').style.display = 'block';
             document.getElementById('tabBtnDash').classList.add('active');
             document.getElementById('tabBtnPanel').classList.remove('active');
-            window.cargarDashboardCotizaciones(); // Refrescar datos al entrar
+            window.cargarDashboardCotizaciones(); 
         }
     };
 
@@ -551,7 +657,6 @@
             document.getElementById('tableBody').innerHTML = '<tr><td colspan="11" class="empty-state">Cargando base de datos...</td></tr>';
             document.getElementById('monthSelect').innerHTML = '<option value="">-- Sin datos --</option>';
             if (unsubsribeEstados) unsubsribeEstados();
-            // Reset vista al login
             window.cambiarVista('panel'); 
         }).catch((error) => {
             console.error("Error al cerrar sesión:", error);
@@ -604,11 +709,10 @@
     }
 
     // --- LÓGICA DE LA FICHA GENERAL ---
-    window.fichaContext = { codTienda: null, mes: null };
+    window.fichaContext = { codTienda: null, mes: null, linksFichas: [] };
 
     window.abrirFicha = async function(codTienda, fechaOrigStr, tienda, zonal, mes) {
-        window.fichaContext = { codTienda, mes };
-
+        window.fichaContext = { codTienda, mes, linksFichas: [] };
         document.getElementById('modCodTiendaTitulo').innerText = codTienda;
         document.getElementById('modTienda').innerText = tienda;
         document.getElementById('modZonal').innerText = zonal;
@@ -685,6 +789,11 @@
             document.getElementById('modRealizado').checked = !!datosNube.Realizado;
             document.getElementById('modCotEnv').checked = !!datosNube.CotEnviadas;
             document.getElementById('modCierre').checked = !!datosNube.Cierre;
+            
+            document.getElementById('nuevoNombreLink').value = '';
+            document.getElementById('nuevoUrlLink').value = '';
+            window.fichaContext.linksFichas = datosNube.LinksFichas || [];
+            window.renderizarLinksFichas();
 
             document.getElementById('fichaModal').style.display = 'flex';
         } catch(error) {
@@ -710,13 +819,9 @@
         try {
             const docRef = doc(db, `estados_${mes}`, codTienda);
             await setDoc(docRef, {
-                FechaModificada: nFecha, 
-                NumReq: nReq,
-                NumCot: nCot,
-                Observaciones: nObs,
-                Realizado: bRealizado,
-                CotEnviadas: bCotEnv,
-                Cierre: bCierre
+                FechaModificada: nFecha, NumReq: nReq, NumCot: nCot, Observaciones: nObs,
+                Realizado: bRealizado, CotEnviadas: bCotEnv, Cierre: bCierre,
+                LinksFichas: window.fichaContext.linksFichas
             }, { merge: true });
             
             cerrarFicha();
@@ -884,11 +989,11 @@
 
             tr.innerHTML = `
                 <td class="centrado">
-    <div style="display: flex; gap: 4px; justify-content: center; align-items: center;">
-        <button class="btn-ficha" onclick="window.abrirFicha('${codTienda}', '${fechaStr}', '${tiendaStr}', '${zonalStr}', '${mesSeleccionado}')">📝 Ficha</button>
-        <button class="btn-equipos" onclick="window.abrirEquipos('${codTienda}', '${mesSeleccionado}')">🔧 Equipos</button>
-    </div>
-</td>
+                    <div style="display: flex; gap: 4px; justify-content: center; align-items: center;">
+                        <button class="btn-ficha" onclick="window.abrirFicha('${codTienda}', '${fechaStr}', '${tiendaStr}', '${zonalStr}', '${mesSeleccionado}')">📝 Ficha</button>
+                        <button class="btn-equipos" onclick="window.abrirEquipos('${codTienda}', '${mesSeleccionado}')">🔧 Equipos</button>
+                    </div>
+                </td>
                 <td class="centrado">
                     <div id="disp_fecha_orig_${codTienda}" class="fw-bold" style="${styleOrigDate}">${row['FECHA INICIO'] || ''}</div>
                     <div id="disp_fecha_mod_${codTienda}" class="fw-bold" style="font-size: 0.85rem; color: var(--secondary); display: ${row._hasModDate ? 'block' : 'none'};">${displayModDate}</div>
@@ -897,7 +1002,10 @@
                 <td>${row['TIENDA'] || ''}</td>
                 <td>${row['JEFE ZONAL'] || ''}</td>
                 <td class="centrado">
-                    <textarea id="req_${codTienda}" class="input-manual" rows="1" onchange="window.guardarCampoManual(this, 'NumReq', '${codTienda}', '${mesSeleccionado}')"></textarea>
+                    <div style="display: flex; gap: 4px; align-items: center; justify-content: center;">
+                        <textarea id="req_${codTienda}" class="input-manual" style="width: 80px;" rows="1" onchange="window.guardarCampoManual(this, 'NumReq', '${codTienda}', '${mesSeleccionado}')"></textarea>
+                        <button class="btn-ficha-blue" style="padding: 6px 8px; height: 32px; font-size: 0.9rem;" onclick="window.abrirFixeat('req_${codTienda}')" title="Buscar REQ en FIXEAT">🔗</button>
+                    </div>
                 </td>
                 <td class="centrado" style="min-width: 160px; vertical-align: top;">
                     <div id="equipos_cot_${codTienda}" style="font-size: 0.75rem; color: #b45309; background: #fef3c7; border: 1px solid #fde68a; border-radius: 4px; padding: 4px; margin-bottom: 4px; display: ${displayCotStyle}; text-align: left; line-height: 1.2; max-height: 80px; overflow-y: auto;">
@@ -965,16 +1073,11 @@
                         
                         dispMod.style.display = 'block';
                         dispMod.innerText = datosNube.FechaModificada.split('-').reverse().join('-');
-                        
-                        const parts = datosNube.FechaModificada.split('-');
-                        const modDate = new Date(parts[0], parts[1]-1, parts[2]).getTime();
-                        dispOrig.closest('tr').setAttribute('data-fecha', modDate);
                     } else {
                         dispOrig.style.textDecoration = 'none';
                         dispOrig.style.color = 'var(--primary)';
                         dispOrig.style.fontWeight = 'bold';
                         dispOrig.style.fontSize = '0.85rem';
-                        
                         dispMod.style.display = 'none';
                         dispMod.innerText = '';
                     }
@@ -1006,7 +1109,6 @@
             try {
                 if (unsubsribeEstados) unsubsribeEstados(); 
                 await deleteDoc(doc(db, "sistema", "datosGlobales"));
-                
                 datosGlobales = [];
                 document.getElementById('excelFileInput').value = '';
                 document.getElementById('monthSelect').innerHTML = '<option value="">-- Sin datos --</option>';
@@ -1021,9 +1123,8 @@
     // --- LÓGICA DEL DASHBOARD DE COTIZACIONES ---
     window.cargarDashboardCotizaciones = async function() {
         const tbody = document.getElementById('dashTableBody');
-        tbody.innerHTML = '<tr><td colspan="8" class="centrado">Extrayendo datos de los equipos...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="15" class="centrado">Extrayendo datos de los equipos...</td></tr>';
 
-        // 1. Mapeamos los nombres de tienda basados en el Excel (datosGlobales)
         let mapTiendas = {};
         datosGlobales.forEach(row => {
             if(row['CÓDIGO TIENDA'] && row['TIENDA']) {
@@ -1035,7 +1136,6 @@
         let total = 0, pendientes = 0, conOC = 0, ejecutadas = 0;
 
         try {
-            // 2. Extraer colección global de equipos_locales
             const querySnapshot = await getDocs(collection(db, "equipos_locales"));
             
             querySnapshot.forEach(doc => {
@@ -1044,10 +1144,9 @@
                 const data = doc.data();
 
                 if(data.Equipos && data.Equipos.length > 0) {
-                    data.Equipos.forEach(eq => {
+                    data.Equipos.forEach((eq, eqIndex) => {
                         if(eq.listaCotizaciones && eq.listaCotizaciones.length > 0) {
-                            eq.listaCotizaciones.forEach(cot => {
-                                // Ignorar si son cotizaciones completamente vacías
+                            eq.listaCotizaciones.forEach((cot, cIndex) => {
                                 if(!cot.numero && !cot.monto && !cot.detalle) return;
 
                                 total++;
@@ -1059,12 +1158,22 @@
                                     codTienda,
                                     nombreTienda,
                                     equipo: eq.nombre,
+                                    eqIndex: eqIndex,
+                                    cIndex: cIndex,
                                     numero: cot.numero || 'S/N',
                                     detalle: cot.detalle || '', 
+                                    tecnicoAsignado: cot.tecnicoAsignado || '', 
                                     monto: cot.monto || '-',
                                     fecha: cot.fecha ? cot.fecha.split('-').reverse().join('-') : '-',
-                                    tieneOC: cot.tieneOC,
-                                    realizado: cot.realizado
+                                    tieneOC: !!cot.tieneOC,
+                                    realizado: !!cot.realizado,
+                                    facturado: !!cot.facturado,
+                                    numeroOC: cot.numeroOC || '',
+                                    reqInstalacion: cot.reqInstalacion || '',
+                                    numeroNV: cot.numeroNV || '', 
+                                    fechaOC: cot.fechaOC || '',
+                                    fechaEjecucion: cot.fechaEjecucion || '',
+                                    fechaFacturacion: cot.fechaFacturacion || ''
                                 });
                             });
                         }
@@ -1072,67 +1181,250 @@
                 }
             });
 
-            // 3. Imprimir KPIs
             document.getElementById('kpiTotal').innerText = total;
             document.getElementById('kpiPendientes').innerText = pendientes;
             document.getElementById('kpiConOC').innerText = conOC;
             document.getElementById('kpiEjecutadas').innerText = ejecutadas;
 
-            // 4. Dibujar Tabla
-            tbody.innerHTML = '';
-            if(arrayCotizaciones.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="centrado empty-state">Aún no hay cotizaciones registradas en los equipos.</td></tr>';
-                return;
-            }
-
-            // Ordenamos alfabéticamente por código de tienda por defecto
             arrayCotizaciones.sort((a,b) => a.codTienda.localeCompare(b.codTienda));
 
-            arrayCotizaciones.forEach(cot => {
-                let badgeHTML = '';
-                if(cot.realizado) {
-                    badgeHTML = '<span class="badge badge-done">✔️ Ejecutada</span>';
-                } else if(cot.tieneOC) {
-                    badgeHTML = '<span class="badge badge-oc">📄 Con OC</span>';
-                } else {
-                    badgeHTML = '<span class="badge badge-pending">⏳ Pendiente OC</span>';
-                }
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="fw-bold" style="color: var(--primary);">${cot.codTienda}</td>
-                    <td style="font-size: 0.8rem;">${cot.nombreTienda}</td>
-                    <td style="font-size: 0.8rem;">🔧 ${cot.equipo}</td>
-                    <td class="fw-bold">${cot.numero}</td>
-                    <td style="font-size: 0.8rem; color: var(--text-muted);">${cot.detalle}</td>
-                    <td>${cot.monto !== '-' ? '$' + cot.monto : '-'}</td>
-                    <td class="centrado">${cot.fecha}</td>
-                    <td class="centrado">${badgeHTML}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-            
-            // Re-aplicar filtro por si hay algo escrito en el buscador
-            window.filtrarDashboard();
+            window.dashDatosGlobales = arrayCotizaciones;
+            window.dashPaginaActual = 1;
+            window.filtrarDashboard(); 
 
         } catch(e) {
             console.error(e);
-            tbody.innerHTML = '<tr><td colspan="8" class="centrado empty-state" style="color: #ef4444;">Ocurrió un error al cargar el Dashboard.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="15" class="centrado empty-state" style="color: #ef4444;">Ocurrió un error al cargar el Dashboard.</td></tr>';
         }
     };
 
-    window.filtrarDashboard = function() {
+    // --- FILTRO MEJORADO DE ESTADOS ---
+    window.filtrarDashboard = function(resetearPagina = true) {
         const searchTerm = document.getElementById('dashSearchInput').value.toLowerCase();
-        const rows = document.querySelectorAll('#dashTableBody tr');
+        const estadoFiltro = document.getElementById('dashStateFilter').value;
+        
+        if (resetearPagina) window.dashPaginaActual = 1;
 
-        rows.forEach(row => {
-            if(row.querySelector('.empty-state')) return;
-            const textContent = row.textContent.toLowerCase();
-            row.style.display = textContent.includes(searchTerm) ? '' : 'none';
+        window.dashDatosFiltrados = window.dashDatosGlobales.filter(cot => {
+            // 1. Filtro de Texto
+            let coincideTexto = true;
+            if (searchTerm !== '') {
+                const textoCompleto = `${cot.codTienda} ${cot.nombreTienda} ${cot.equipo} ${cot.numero} ${cot.detalle} ${cot.monto} ${cot.numeroOC} ${cot.reqInstalacion} ${cot.numeroNV} ${cot.tecnicoAsignado}`.toLowerCase();
+                coincideTexto = textoCompleto.includes(searchTerm);
+            }
+
+            // 2. Filtro de Estado
+            let coincideEstado = true;
+            if (estadoFiltro === 'pendiente_oc') {
+                coincideEstado = !cot.tieneOC;
+            } else if (estadoFiltro === 'con_oc') {
+                coincideEstado = cot.tieneOC && !cot.realizado;
+            } else if (estadoFiltro === 'ejecutado') {
+                coincideEstado = cot.realizado && !cot.facturado;
+            } else if (estadoFiltro === 'facturado') {
+                coincideEstado = !!cot.facturado;
+            }
+
+            return coincideTexto && coincideEstado;
         });
+        
+        window.renderizarTablaDashboard();
     };
 
-    // --- LÓGICA DE LA VENTANA DE EQUIPOS ---
+    window.renderizarTablaDashboard = function() {
+        const tbody = document.getElementById('dashTableBody');
+        tbody.innerHTML = '';
+
+        if(window.dashDatosFiltrados.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="15" class="centrado empty-state">No hay cotizaciones para mostrar con este filtro.</td></tr>';
+            document.getElementById('dashPagination').style.display = 'none';
+            return;
+        }
+
+        const totalPaginas = Math.ceil(window.dashDatosFiltrados.length / window.dashItemsPorPagina);
+        if (window.dashPaginaActual > totalPaginas) window.dashPaginaActual = totalPaginas;
+
+        const inicio = (window.dashPaginaActual - 1) * window.dashItemsPorPagina;
+        const fin = inicio + window.dashItemsPorPagina;
+        const datosPagina = window.dashDatosFiltrados.slice(inicio, fin);
+
+        datosPagina.forEach(cot => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="fw-bold" style="color: var(--primary); font-size: 0.8rem;">${cot.codTienda}</td>
+                <td style="font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" title="${cot.nombreTienda}">${cot.nombreTienda}</td>
+                <td style="font-size: 0.75rem;">🔧 ${cot.equipo}</td>
+                
+                <td class="centrado">
+                    <button class="btn-ficha-blue" onclick="window.abrirModalCotDash('${cot.codTienda}', ${cot.eqIndex}, ${cot.cIndex})" title="Ver detalles y editar">
+                        🔍 ${cot.numero}
+                    </button>
+                </td>
+                
+                <td>
+                    <input type="text" class="equipo-input" style="padding: 4px; font-size: 0.75rem; width: 100%; box-sizing: border-box;" value="${cot.detalle}" placeholder="Repuestos..." onchange="window.actualizarCotizacionDesdeDash('${cot.codTienda}', ${cot.eqIndex}, ${cot.cIndex}, 'detalle', this.value)">
+                </td>
+                
+                <td>
+                    <input type="text" class="equipo-input" list="listaTecnicos" style="padding: 4px; font-size: 0.75rem; width: 100%; box-sizing: border-box;" value="${cot.tecnicoAsignado}" placeholder="Técnico..." onchange="window.actualizarCotizacionDesdeDash('${cot.codTienda}', ${cot.eqIndex}, ${cot.cIndex}, 'tecnicoAsignado', this.value)">
+                </td>
+
+                <td class="centrado">
+                    <input type="checkbox" style="cursor:pointer; transform: scale(1.3);" ${cot.tieneOC ? 'checked' : ''} onchange="window.actualizarCotizacionDesdeDash('${cot.codTienda}', ${cot.eqIndex}, ${cot.cIndex}, 'tieneOC', this.checked)">
+                </td>
+                <td>
+                    <input type="text" class="equipo-input" style="padding: 4px; font-size: 0.75rem; width: 100%; box-sizing: border-box;" value="${cot.numeroOC}" placeholder="N° OC" onchange="window.actualizarCotizacionDesdeDash('${cot.codTienda}', ${cot.eqIndex}, ${cot.cIndex}, 'numeroOC', this.value)">
+                </td>
+                
+                <td>
+                    <!-- AQUÍ SE AGREGA EL BOTÓN PARA EL REQ DEL DASHBOARD PRINCIPAL -->
+                    <div style="display: flex; gap: 2px;">
+                        <input type="text" id="dash_req_${cot.codTienda}_${cot.eqIndex}_${cot.cIndex}" class="equipo-input" style="padding: 4px; font-size: 0.75rem; width: 100%; box-sizing: border-box;" value="${cot.reqInstalacion}" placeholder="N° Req." onchange="window.actualizarCotizacionDesdeDash('${cot.codTienda}', ${cot.eqIndex}, ${cot.cIndex}, 'reqInstalacion', this.value)">
+                        <button class="btn-ficha-blue" style="padding: 4px 6px;" onclick="window.abrirFixeat('dash_req_${cot.codTienda}_${cot.eqIndex}_${cot.cIndex}')" title="Buscar en FIXEAT">🔗</button>
+                    </div>
+                </td>
+
+                <td>
+                    <input type="text" class="equipo-input" style="padding: 4px; font-size: 0.75rem; width: 100%; box-sizing: border-box;" value="${cot.numeroNV}" placeholder="N° NV" onchange="window.actualizarCotizacionDesdeDash('${cot.codTienda}', ${cot.eqIndex}, ${cot.cIndex}, 'numeroNV', this.value)">
+                </td>
+                <td>
+                    <input type="date" class="equipo-input" style="padding: 4px; font-size: 0.75rem; width: 100%; box-sizing: border-box;" value="${cot.fechaOC}" onchange="window.actualizarCotizacionDesdeDash('${cot.codTienda}', ${cot.eqIndex}, ${cot.cIndex}, 'fechaOC', this.value)">
+                </td>
+                <td>
+                    <input type="date" class="equipo-input" style="padding: 4px; font-size: 0.75rem; width: 100%; box-sizing: border-box;" value="${cot.fechaEjecucion}" onchange="window.actualizarCotizacionDesdeDash('${cot.codTienda}', ${cot.eqIndex}, ${cot.cIndex}, 'fechaEjecucion', this.value)">
+                </td>
+                <td class="centrado">
+                    <input type="checkbox" style="cursor:pointer; transform: scale(1.3);" ${cot.realizado ? 'checked' : ''} onchange="window.actualizarCotizacionDesdeDash('${cot.codTienda}', ${cot.eqIndex}, ${cot.cIndex}, 'realizado', this.checked)">
+                </td>
+                <td class="centrado">
+                    <input type="checkbox" style="cursor:pointer; transform: scale(1.3);" ${cot.facturado ? 'checked' : ''} onchange="window.actualizarCotizacionDesdeDash('${cot.codTienda}', ${cot.eqIndex}, ${cot.cIndex}, 'facturado', this.checked)">
+                </td>
+                <td>
+                    <input type="date" class="equipo-input" style="padding: 4px; font-size: 0.75rem; width: 100%; box-sizing: border-box;" value="${cot.fechaFacturacion}" onchange="window.actualizarCotizacionDesdeDash('${cot.codTienda}', ${cot.eqIndex}, ${cot.cIndex}, 'fechaFacturacion', this.value)">
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('dashPagination').style.display = 'flex';
+        document.getElementById('dashPageInfo').innerText = `Página ${window.dashPaginaActual} de ${totalPaginas}`;
+    };
+
+    window.cambiarPaginaDash = function(delta) {
+        const totalPaginas = Math.ceil(window.dashDatosFiltrados.length / window.dashItemsPorPagina);
+        const nuevaPagina = window.dashPaginaActual + delta;
+
+        if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
+            window.dashPaginaActual = nuevaPagina;
+            window.renderizarTablaDashboard();
+        }
+    };
+
+    window.actualizarCotizacionDesdeDash = async function(codTienda, eqIndex, cIndex, campo, valor) {
+        try {
+            const docRef = doc(db, "equipos_locales", codTienda);
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists()) {
+                let data = docSnap.data();
+                if (data.Equipos && data.Equipos[eqIndex] && data.Equipos[eqIndex].listaCotizaciones[cIndex]) {
+                    data.Equipos[eqIndex].listaCotizaciones[cIndex][campo] = valor;
+                    await setDoc(docRef, { Equipos: data.Equipos }, { merge: true });
+                    
+                    let dashItem = window.dashDatosGlobales.find(item => item.codTienda === codTienda && item.eqIndex === eqIndex && item.cIndex === cIndex);
+                    if (dashItem) {
+                        dashItem[campo] = valor;
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Error al guardar desde dashboard:", error);
+            alert("Hubo un error al guardar el cambio automáticamente. Verifica tu conexión.");
+        }
+    };
+
+    // --- NUEVAS FUNCIONES PARA EL MODAL EXCLUSIVO DEL DASHBOARD ---
+    window.abrirModalCotDash = function(codTienda, eqIndex, cIndex) {
+        window.cotDashContext = { codTienda, eqIndex, cIndex };
+        const cot = window.dashDatosGlobales.find(item => item.codTienda === codTienda && item.eqIndex === eqIndex && item.cIndex === cIndex);
+        
+        if(cot) {
+            document.getElementById('cdLocal').innerText = `${cot.codTienda} - ${cot.nombreTienda}`;
+            document.getElementById('cdEquipo').innerText = cot.equipo;
+            document.getElementById('cdNumero').value = cot.numero === 'S/N' ? '' : cot.numero;
+            document.getElementById('cdMonto').value = cot.monto === '-' ? '' : cot.monto;
+            document.getElementById('cdDetalle').value = cot.detalle;
+            document.getElementById('cdTecnico').value = cot.tecnicoAsignado; 
+            document.getElementById('cdOC').value = cot.numeroOC;
+            document.getElementById('cdReq').value = cot.reqInstalacion;
+            document.getElementById('cdNV').value = cot.numeroNV;
+            document.getElementById('cdFechaOC').value = cot.fechaOC;
+            document.getElementById('cdFechaEjecucion').value = cot.fechaEjecucion;
+            document.getElementById('cdFechaFacturacion').value = cot.fechaFacturacion;
+            document.getElementById('cdTieneOC').checked = !!cot.tieneOC;
+            document.getElementById('cdRealizado').checked = !!cot.realizado;
+            document.getElementById('cdFacturado').checked = !!cot.facturado;
+
+            document.getElementById('cotDashModal').style.display = 'flex';
+        }
+    };
+
+    window.cerrarModalCotDash = function() {
+        document.getElementById('cotDashModal').style.display = 'none';
+    };
+
+    window.guardarModalCotDash = async function() {
+        const { codTienda, eqIndex, cIndex } = window.cotDashContext;
+        const btn = document.getElementById('btnGuardarCotDash');
+        btn.innerText = "Guardando...";
+        btn.disabled = true;
+
+        const nuevosDatos = {
+            numero: document.getElementById('cdNumero').value,
+            monto: document.getElementById('cdMonto').value,
+            detalle: document.getElementById('cdDetalle').value,
+            tecnicoAsignado: document.getElementById('cdTecnico').value, 
+            numeroOC: document.getElementById('cdOC').value,
+            reqInstalacion: document.getElementById('cdReq').value,
+            numeroNV: document.getElementById('cdNV').value,
+            fechaOC: document.getElementById('cdFechaOC').value,
+            fechaEjecucion: document.getElementById('cdFechaEjecucion').value,
+            fechaFacturacion: document.getElementById('cdFechaFacturacion').value,
+            tieneOC: document.getElementById('cdTieneOC').checked,
+            realizado: document.getElementById('cdRealizado').checked,
+            facturado: document.getElementById('cdFacturado').checked
+        };
+
+        try {
+            const docRef = doc(db, "equipos_locales", codTienda);
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists()) {
+                let data = docSnap.data();
+                if (data.Equipos && data.Equipos[eqIndex] && data.Equipos[eqIndex].listaCotizaciones[cIndex]) {
+                    
+                    data.Equipos[eqIndex].listaCotizaciones[cIndex] = { ...data.Equipos[eqIndex].listaCotizaciones[cIndex], ...nuevosDatos };
+                    await setDoc(docRef, { Equipos: data.Equipos }, { merge: true });
+                    
+                    let dashItem = window.dashDatosGlobales.find(item => item.codTienda === codTienda && item.eqIndex === eqIndex && item.cIndex === cIndex);
+                    if (dashItem) {
+                        Object.assign(dashItem, nuevosDatos);
+                    }
+                    
+                    window.filtrarDashboard(false); 
+                    cerrarModalCotDash();
+                }
+            }
+        } catch (error) {
+            console.error("Error guardando modal dash:", error);
+            alert("Error de conexión al guardar los datos.");
+        } finally {
+            btn.innerText = "Guardar Cambios";
+            btn.disabled = false;
+        }
+    };
+
+    // --- LÓGICA DE LA VENTANA DE EQUIPOS (MODAL GENERAL) ---
     window.equiposContext = { codTienda: null, mes: null, lista: [] };
     window.equiposExpandedState = {}; 
 
@@ -1145,7 +1437,6 @@
 
         try {
             let equiposBD = null;
-
             const docRefGlobal = doc(db, "equipos_locales", codTienda);
             const docSnapGlobal = await getDoc(docRefGlobal);
             
@@ -1168,7 +1459,11 @@
                     if (!eq.listaCotizaciones) {
                         eq.listaCotizaciones = [];
                         if (eq.cotizaciones && eq.cotizaciones.trim() !== '') {
-                            eq.listaCotizaciones.push({ numero: eq.cotizaciones, monto: '', fecha: '', detalle: '', tieneOC: false, realizado: false });
+                            eq.listaCotizaciones.push({ 
+                                numero: eq.cotizaciones, monto: '', fecha: '', detalle: '', tecnicoAsignado: '', numeroOC: '', 
+                                reqInstalacion: '', numeroNV: '', fechaOC: '', fechaEjecucion: '', 
+                                fechaFacturacion: '', tieneOC: false, realizado: false, facturado: false 
+                            });
                             eq.cotizaciones = ''; 
                         }
                     }
@@ -1226,21 +1521,68 @@
                     cotizacionesHTML += `
                         <div class="cot-item">
                             <div class="cot-grid-info">
-                                <input type="text" class="equipo-input" value="${cot.numero || ''}" placeholder="N° Cotización" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'numero', this.value)">
+                                <div style="display: flex; gap: 4px;">
+                                    <input type="text" id="eq_cot_${index}_${cIndex}" class="equipo-input" value="${cot.numero || ''}" placeholder="N° Cotización" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'numero', this.value)" style="flex: 1;">
+                                    <button class="btn-ficha-blue" style="padding: 4px 8px;" onclick="window.abrirFixeatCotizacion('eq_cot_${index}_${cIndex}')" title="Buscar Cotización en FIXEAT">🔗</button>
+                                </div>
                                 <input type="text" class="equipo-input" value="${cot.monto || ''}" placeholder="Monto ($)" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'monto', this.value)">
                                 <input type="date" class="equipo-input" value="${cot.fecha || ''}" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'fecha', this.value)" title="Fecha de emisión">
                                 <button class="btn-del-hist" onclick="window.eliminarCotizacion(${index}, ${cIndex})">Borrar</button>
                             </div>
-                            <!-- NUEVO CAMPO DETALLE -->
+                            
+                            <!-- CAMPO DETALLE / REPUESTOS -->
                             <div style="margin-bottom: 8px;">
-                                <input type="text" class="equipo-input" value="${cot.detalle || ''}" placeholder="Detalle u observación de lo cotizado..." onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'detalle', this.value)" style="width: 100%;">
+                                <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">Repuestos u Observaciones</label>
+                                <input type="text" class="equipo-input" value="${cot.detalle || ''}" placeholder="Ej: Motor ventilador, termostato..." onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'detalle', this.value)" style="width: 100%;">
                             </div>
+                            
+                            <!-- CAMPOS TÉCNICOS Y FECHAS -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 8px; background: #ffffff; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px;">
+                                <div>
+                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">Técnico Asig.</label>
+                                    <input type="text" class="equipo-input" list="listaTecnicos" value="${cot.tecnicoAsignado || ''}" placeholder="Técnico..." onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'tecnicoAsignado', this.value)">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">N° OC</label>
+                                    <input type="text" class="equipo-input" value="${cot.numeroOC || ''}" placeholder="Ej: OC-123" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'numeroOC', this.value)">
+                                </div>
+                                
+                                <div>
+                                    <!-- AQUÍ SE AGREGA EL BOTÓN PARA EL REQ EN LA GESTIÓN DEL EQUIPO -->
+                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">N° Req. Instalación</label>
+                                    <div style="display: flex; gap: 4px;">
+                                        <input type="text" id="eq_req_${index}_${cIndex}" class="equipo-input" value="${cot.reqInstalacion || ''}" placeholder="Ej: REQ-987" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'reqInstalacion', this.value)" style="flex: 1;">
+                                        <button class="btn-ficha-blue" style="padding: 4px 8px;" onclick="window.abrirFixeat('eq_req_${index}_${cIndex}')" title="Buscar en FIXEAT">🔗</button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">N° Nota Venta (NV)</label>
+                                    <input type="text" class="equipo-input" value="${cot.numeroNV || ''}" placeholder="Ej: NV-001" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'numeroNV', this.value)">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">Fecha Llegada OC</label>
+                                    <input type="date" class="equipo-input" value="${cot.fechaOC || ''}" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'fechaOC', this.value)">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">Fecha Ejecución</label>
+                                    <input type="date" class="equipo-input" value="${cot.fechaEjecucion || ''}" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'fechaEjecucion', this.value)">
+                                </div>
+                                <div>
+                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">Fecha Facturación</label>
+                                    <input type="date" class="equipo-input" value="${cot.fechaFacturacion || ''}" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'fechaFacturacion', this.value)">
+                                </div>
+                            </div>
+
                             <div class="cot-grid-checks">
                                 <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
                                     <input type="checkbox" style="width:16px; height:16px; cursor:pointer;" ${cot.tieneOC ? 'checked' : ''} onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'tieneOC', this.checked)"> Tiene OC
                                 </label>
                                 <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
                                     <input type="checkbox" style="width:16px; height:16px; cursor:pointer;" ${cot.realizado ? 'checked' : ''} onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'realizado', this.checked)"> Ejecutado
+                                </label>
+                                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                                    <input type="checkbox" style="width:16px; height:16px; cursor:pointer;" ${cot.facturado ? 'checked' : ''} onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'facturado', this.checked)"> Facturado
                                 </label>
                             </div>
                         </div>
@@ -1268,14 +1610,19 @@
                 </summary>
                 
                 <div class="equipo-content">
-                    <div class="equipo-grid">
+                    <div class="equipo-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                        <div class="equipo-field">
+                            <label>Nombre del Equipo</label>
+                            <input type="text" class="equipo-input" value="${equipo.nombre || ''}" onchange="window.actualizarCampoEquipo(${index}, 'nombre', this.value); window.renderizarEquipos();" placeholder="Ej: Horno, Visicooler...">
+                        </div>
+
                         <div class="equipo-field">
                             <label>N° de Serie / Modelo</label>
                             <input type="text" class="equipo-input" value="${equipo.serie || ''}" onchange="window.actualizarCampoEquipo(${index}, 'serie', this.value)" placeholder="Ej: SN-987654321">
                         </div>
                     </div>
                     
-                    <div class="equipo-field">
+                    <div class="equipo-field" style="margin-top: 12px;">
                         <label>Observaciones Generales</label>
                         <textarea class="equipo-textarea" rows="2" onchange="window.actualizarCampoEquipo(${index}, 'observaciones', this.value)" placeholder="Estado físico del equipo, notas de precaución...">${equipo.observaciones || ''}</textarea>
                     </div>
@@ -1350,12 +1697,9 @@
             window.equiposContext.lista[eqIndex].listaCotizaciones = [];
         }
         window.equiposContext.lista[eqIndex].listaCotizaciones.push({
-            numero: '',
-            monto: '',
-            fecha: '',
-            detalle: '', // NUEVO CAMPO
-            tieneOC: false,
-            realizado: false
+            numero: '', monto: '', fecha: '', detalle: '', tecnicoAsignado: '', numeroOC: '', 
+            reqInstalacion: '', numeroNV: '', fechaOC: '', fechaEjecucion: '', fechaFacturacion: '',
+            tieneOC: false, realizado: false, facturado: false
         });
         window.equiposExpandedState[eqIndex] = true; 
         window.renderizarEquipos();
@@ -1418,7 +1762,6 @@
             cerrarEquipos();
             
             procesarDatos(); 
-            // Refrescamos también el dashboard si estuviera activo de fondo
             if(document.getElementById('vistaDashboard').style.display === 'block') {
                 window.cargarDashboardCotizaciones();
             }
@@ -1428,6 +1771,93 @@
         } finally {
             btnGuardar.innerText = 'Guardar Cambios';
             btnGuardar.disabled = false;
+        }
+    };
+
+    // --- LÓGICA DE LINKS DE FICHAS DE SERVICIO ---
+
+    window.renderizarLinksFichas = function() {
+        const contenedor = document.getElementById('listaFichasLinks');
+        contenedor.innerHTML = '';
+        
+        if (window.fichaContext.linksFichas.length === 0) {
+            contenedor.innerHTML = '<span style="font-size: 0.8rem; color: #94a3b8; font-style: italic;">No hay links guardados para este local.</span>';
+            return;
+        }
+
+        window.fichaContext.linksFichas.forEach((ficha, index) => {
+            contenedor.innerHTML += `
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <a href="${ficha.url}" target="_blank" style="font-size: 0.85rem; color: var(--secondary); text-decoration: none; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px;" title="${ficha.nombre}">📄 ${ficha.nombre || 'Archivo adjunto'}</a>
+                    
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-ficha" style="font-size: 0.75rem; padding: 4px 8px;" onclick="window.copiarLinkPortapapeles('${ficha.url}')">🔗 Copiar Link</button>
+                        <button class="btn-ficha" style="color: #ef4444; font-size: 0.75rem; padding: 4px 8px;" onclick="window.eliminarLinkFicha(${index})" title="Eliminar link">🗑️</button>
+                    </div>
+                </div>
+            `;
+        });
+    };
+
+    window.agregarLinkFicha = function() {
+        const nombreInput = document.getElementById('nuevoNombreLink');
+        const urlInput = document.getElementById('nuevoUrlLink');
+        
+        const nombre = nombreInput.value.trim() || 'Ficha de Servicio';
+        const url = urlInput.value.trim();
+
+        if (!url) {
+            alert("Por favor, ingresa o pega el link de descarga.");
+            return;
+        }
+
+        window.fichaContext.linksFichas.push({ nombre, url });
+        nombreInput.value = '';
+        urlInput.value = '';
+        window.renderizarLinksFichas();
+    };
+
+    window.copiarLinkPortapapeles = function(url) {
+        navigator.clipboard.writeText(url).then(() => {
+            alert("¡Link copiado al portapapeles!");
+        }).catch(err => {
+            console.error('Error al copiar: ', err);
+            alert("Tu navegador no soporta la copia automática. Haz clic derecho en el nombre del archivo y selecciona 'Copiar dirección de enlace'.");
+        });
+    };
+
+    window.eliminarLinkFicha = function(index) {
+        if (confirm("¿Estás seguro de que deseas quitar este link? (Recuerda presionar 'Guardar Cambios' en el modal para confirmar la eliminación en la base de datos)")) {
+            window.fichaContext.linksFichas.splice(index, 1);
+            window.renderizarLinksFichas();
+        }
+    };
+
+    // --- LÓGICA PARA ABRIR REQ EN FIXEAT ---
+    window.abrirFixeat = function(inputId) {
+        const reqInput = document.getElementById(inputId);
+        const reqValue = reqInput ? reqInput.value.trim() : '';
+        
+        if (reqValue !== '') {
+            const url = "https://app.fixeat.cl/maquipan/services?tableSearch=" + encodeURIComponent(reqValue);
+            window.open(url, '_blank');
+        } else {
+            alert("Primero debes ingresar un número de REQ en la casilla.");
+            if (reqInput) reqInput.focus();
+        }
+    };
+
+    // --- LÓGICA PARA ABRIR COTIZACIÓN EN FIXEAT ---
+    window.abrirFixeatCotizacion = function(inputId) {
+        const cotInput = document.getElementById(inputId);
+        const cotValue = cotInput ? cotInput.value.trim() : '';
+        
+        if (cotValue !== '') {
+            const url = "https://app.fixeat.cl/maquipan/quotes?tableSearch=" + encodeURIComponent(cotValue);
+            window.open(url, '_blank');
+        } else {
+            alert("Primero debes ingresar un número de Cotización en la casilla.");
+            if (cotInput) cotInput.focus();
         }
     };
 </script>
