@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Supervisión - Mantenimiento Preventivo</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Librería para exportar a Excel (Con soporte de estilos) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.min.js"></script>
+    
+    <!-- Librerías para generar Informes PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -146,6 +153,11 @@
         .badge-pending { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
         .badge-oc { background: #e0e7ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
         .badge-done { background: #d1fae5; color: #047857; border: 1px solid #a7f3d0; }
+        
+        /* --- BADGES DE ESTADO DE EQUIPOS --- */
+        .badge-op { background: #d1fae5; color: #047857; border: 1px solid #a7f3d0; } 
+        .badge-obs { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; } 
+        .badge-fs { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; } 
 
         /* --- MODALES --- */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
@@ -178,16 +190,11 @@
         .equipos-list::-webkit-scrollbar { width: 6px; }
         .equipos-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
 
-        details.equipo-card { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; text-align: left; transition: all 0.3s ease; }
-        details.equipo-card > summary { padding: 14px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: var(--primary); cursor: pointer; list-style: none; font-size: 0.95rem; user-select: none; }
-        details.equipo-card > summary::-webkit-details-marker { display: none; }
-        details.equipo-card > summary:hover { background: #f1f5f9; border-radius: 8px; }
-        details.equipo-card[open] > summary { border-bottom: 2px solid #e2e8f0; background: #f1f5f9; border-radius: 8px 8px 0 0; }
-        .equipo-summary-icon { transition: transform 0.3s ease; color: var(--text-muted); font-size: 0.8rem; }
-        details.equipo-card[open] > summary .equipo-summary-icon { transform: rotate(180deg); }
+        .equipo-card-btn { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; color: var(--primary); cursor: pointer; transition: all 0.2s ease; }
+        .equipo-card-btn:hover { background: #f1f5f9; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .equipo-summary-icon { font-size: 0.8rem; color: var(--secondary); }
 
-        .equipo-content { padding: 14px; display: flex; flex-direction: column; gap: 12px; background: #ffffff; border-radius: 0 0 8px 8px; }
-        .btn-remove { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; align-self: flex-end; margin-top: 10px; transition: 0.2s; }
+        .btn-remove { background: #ef4444; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
         .btn-remove:hover { background: #dc2626; }
         .equipo-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
         .equipo-field { display: flex; flex-direction: column; gap: 6px; }
@@ -203,11 +210,16 @@
         .btn-equipos { background-color: #f59e0b; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s; white-space: nowrap; margin-left: 5px; }
         .btn-equipos:hover { background-color: #d97706; }
 
-        /* --- SECCIÓN DE COTIZACIONES (MODAL) --- */
+        /* --- COTIZACIONES DESPLEGABLES DENTRO DEL EQUIPO --- */
         .cot-section { margin-top: 5px; border-top: 1px dashed #cbd5e1; padding-top: 10px; }
-        .cot-item { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 8px; }
+        details.cot-details { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 8px; transition: all 0.3s ease; }
+        details.cot-details > summary { padding: 10px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--primary); cursor: pointer; list-style: none; font-size: 0.85rem; user-select: none; }
+        details.cot-details > summary::-webkit-details-marker { display: none; }
+        details.cot-details > summary:hover { background: #f1f5f9; border-radius: 6px; }
+        details.cot-details[open] > summary { border-bottom: 1px dashed #cbd5e1; border-radius: 6px 6px 0 0; }
+        .cot-details-content { padding: 12px; background: #ffffff; border-radius: 0 0 6px 6px; border-top: none; }
         .cot-grid-info { display: grid; grid-template-columns: 1fr 100px 130px auto; gap: 8px; align-items: center; margin-bottom: 8px; }
-        .cot-grid-checks { display: flex; gap: 15px; font-weight: 600; color: var(--text-main); font-size: 0.75rem; align-items: center; background: #ffffff; padding: 6px 10px; border-radius: 4px; border: 1px solid #e2e8f0; flex-wrap: wrap; }
+        .cot-grid-checks { display: flex; gap: 15px; font-weight: 600; color: var(--text-main); font-size: 0.75rem; align-items: center; background: #f8fafc; padding: 8px 10px; border-radius: 4px; border: 1px solid #e2e8f0; flex-wrap: wrap; margin-top: 8px; }
 
         /* --- ESTILOS DEL HISTORIAL DE EQUIPOS --- */
         .historial-section { margin-top: 10px; border-top: 1px dashed #cbd5e1; padding-top: 10px; }
@@ -257,6 +269,8 @@
     <div class="tabs-container">
         <button id="tabBtnPanel" class="tab-btn active" onclick="cambiarVista('panel')">📊 Panel Principal</button>
         <button id="tabBtnDash" class="tab-btn" onclick="cambiarVista('dashboard')">📈 Dashboard Cotizaciones</button>
+        <button id="tabBtnEquipos" class="tab-btn" onclick="cambiarVista('dashboardEquipos')">🛠️ Dashboard Equipos</button>
+        <button id="tabBtnLocales" class="tab-btn" onclick="cambiarVista('locales')">🏪 Gestión de Locales</button>
     </div>
 
     <!-- VISTA 1: PANEL PRINCIPAL -->
@@ -355,6 +369,7 @@
                 <input type="text" id="dashSearchInput" class="search-input" style="flex: 1; min-width: 200px;" placeholder="Filtrar por código, tienda, equipo, técnico..." oninput="window.filtrarDashboard()">
             </div>
             <button class="btn-action" style="background-color: var(--secondary); white-space: nowrap;" onclick="cargarDashboardCotizaciones()">🔄 Actualizar Datos</button>
+            <button class="btn-action" style="background-color: var(--success); white-space: nowrap; margin-left: 10px;" onclick="window.exportarExcelCotizaciones()">📥 Descargar Excel</button>
         </div>
 
         <!-- Tabla Dashboard -->
@@ -366,6 +381,7 @@
                         <th style="width: 140px;">Nombre Tienda</th>
                         <th style="width: 110px;">Equipo</th>
                         <th style="width: 90px;" class="centrado">Ver Modal</th>
+                        <th style="width: 100px;">Monto ($)</th>
                         <th style="width: 140px;">Repuestos / Obs.</th>
                         <th style="width: 110px;">Técnico Asig.</th> 
                         <th class="centrado" style="width: 50px;" title="¿Tiene OC?">OC?</th>
@@ -380,7 +396,7 @@
                     </tr>
                 </thead>
                 <tbody id="dashTableBody">
-                    <tr><td colspan="15" class="empty-state">Cargando dashboard...</td></tr>
+                    <tr><td colspan="16" class="empty-state">Cargando dashboard...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -390,6 +406,164 @@
             <button class="btn-action btn-cancel" onclick="window.cambiarPaginaDash(-1)">Anterior</button>
             <span id="dashPageInfo" style="font-size: 0.9rem; font-weight: 600; color: var(--primary);">Página 1 de X</span>
             <button class="btn-action" style="background: var(--secondary);" onclick="window.cambiarPaginaDash(1)">Siguiente</button>
+        </div>
+    </div>
+
+    <!-- VISTA 3: DASHBOARD DE ESTADO DE EQUIPOS -->
+    <div id="vistaDashboardEquipos" style="display: none;">
+        
+        <!-- Tarjetas KPIs Equipos -->
+        <div class="kpi-container">
+            <div class="kpi-card b-blue">
+                <div class="kpi-title">Total Equipos Registrados</div>
+                <div class="kpi-value" id="kpiEqTotal">0</div>
+            </div>
+            <div class="kpi-card b-green">
+                <div class="kpi-title">Operativos</div>
+                <div class="kpi-value" id="kpiEqOp" style="color: var(--success);">0</div>
+            </div>
+            <div class="kpi-card b-yellow">
+                <div class="kpi-title">Con Observaciones</div>
+                <div class="kpi-value" id="kpiEqObs" style="color: #d97706;">0</div>
+            </div>
+            <div class="kpi-card" style="border-left: 4px solid #ef4444;">
+                <div class="kpi-title">Fuera de Servicio</div>
+                <div class="kpi-value" id="kpiEqFs" style="color: #ef4444;">0</div>
+            </div>
+        </div>
+
+        <!-- Controles Dashboard Equipos -->
+        <div class="control-panel" style="margin-bottom: 20px; align-items: center; padding: 12px 24px;">
+            <div class="control-group" style="flex: 1; flex-direction: row; align-items: center; gap: 15px; flex-wrap: wrap;">
+                <label style="margin: 0; white-space: nowrap;">Estado del Equipo:</label>
+                <select id="dashEqStateFilter" style="min-width: 220px;" onchange="window.filtrarDashboardEquipos()">
+                    <option value="todos">Todos los estados</option>
+                    <option value="Operativo">🟢 Operativo</option>
+                    <option value="Con observaciones">🟡 Con observaciones</option>
+                    <option value="Fuera de Servicio">🔴 Fuera de Servicio</option>
+                </select>
+
+                <label style="margin: 0; white-space: nowrap; margin-left: 10px;">Buscador Rápido:</label>
+                <input type="text" id="dashEqSearchInput" class="search-input" style="flex: 1; min-width: 200px;" placeholder="Buscar local, tienda, equipo, N° serie..." oninput="window.filtrarDashboardEquipos()">
+            </div>
+            <button class="btn-action" style="background-color: var(--secondary); white-space: nowrap;" onclick="cargarDashboardEquipos()">🔄 Actualizar Datos</button>
+            <button class="btn-action" style="background-color: var(--success); white-space: nowrap; margin-left: 10px;" onclick="window.exportarExcelEquipos()">📥 Descargar Excel</button>
+        </div>
+
+        <!-- Tabla Dashboard Equipos -->
+        <div class="table-container" style="max-height: calc(100vh - 350px);">
+            <table id="dashEqTable" style="min-width: 1200px;">
+                <thead>
+                    <tr>
+                        <th style="width: 70px;">Local</th>
+                        <th style="width: 180px;">Nombre Tienda</th>
+                        <th style="width: 150px;">Equipo</th>
+                        <th style="width: 110px;">N° Serie</th>
+                        <th style="width: 120px;" class="centrado">Estado Actual</th>
+                        <th style="width: 280px;">Cotizaciones / Repuestos</th>
+                        <th>Observaciones</th>
+                        <th style="width: 100px;" class="centrado">Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="dashEqTableBody">
+                    <tr><td colspan="8" class="empty-state">Cargando equipos...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- VISTA 4: GESTIÓN DE LOCALES (NUEVA PESTAÑA) -->
+    <div id="vistaLocales" style="display: none;">
+        
+        <!-- Formulario para agregar manual -->
+        <div class="control-panel" style="margin-bottom: 20px; align-items: flex-end; padding-bottom: 20px;">
+            <h3 style="width: 100%; margin: 0 0 15px 0; color: var(--primary); font-size: 1.1rem;">➕ Añadir Nuevo Local Manualmente</h3>
+            
+            <div class="control-group">
+                <label>Mes Operativo</label>
+                <input type="text" id="nlMes" class="search-input" list="listaMesesExistentes" placeholder="Ej: ABRIL 2026" style="min-width: 150px; text-transform: uppercase;">
+                <datalist id="listaMesesExistentes"></datalist>
+            </div>
+            <div class="control-group">
+                <label>Fecha de Inicio (Opcional)</label>
+                <input type="date" id="nlFecha" class="search-input" style="min-width: 150px;">
+            </div>
+            <div class="control-group">
+                <label>Cód. Tienda</label>
+                <input type="text" id="nlCod" class="search-input" placeholder="Ej: T-001" style="min-width: 120px;">
+            </div>
+            <div class="control-group">
+                <label>Nombre Tienda</label>
+                <input type="text" id="nlNombre" class="search-input" placeholder="Ej: Local Centro" style="min-width: 200px;">
+            </div>
+            <div class="control-group">
+                <label>Resp. Zonal</label>
+                <input type="text" id="nlZonal" class="search-input" placeholder="Ej: Juan Perez" style="min-width: 150px;">
+            </div>
+            
+            <button class="btn-action btn-save" onclick="window.agregarLocalManual()" style="height: 36px; padding: 0 20px;">Guardar Local</button>
+        </div>
+
+        <!-- Directorio Global -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+            <h3 style="margin: 0; color: var(--primary); font-size: 1.1rem;">📋 Directorio Global de Locales</h3>
+            <input type="text" id="searchLocales" class="search-input" placeholder="Buscar en el directorio..." oninput="window.renderizarTablaLocales()" style="min-width: 250px;">
+        </div>
+
+        <div class="table-container" style="max-height: calc(100vh - 350px);">
+            <table id="tablaLocalesMain" style="min-width: 1000px;">
+                <thead>
+                    <tr>
+                        <th style="width: 120px;">Cód. Tienda</th>
+                        <th style="width: 250px;">Nombre Tienda</th>
+                        <th style="width: 180px;">Jefe Zonal</th>
+                        <th style="width: 250px;">Meses Programados</th>
+                        <th class="centrado" style="width: 100px;">Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyLocalesMain">
+                    <tr><td colspan="5" class="empty-state">Cargando base de datos...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- NUEVO MODAL: EDICIÓN DE LOCAL GLOBAL -->
+<div id="modalEditLocal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 550px;">
+        <div class="modal-header">Editar Datos del Local 🏪</div>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0;">Actualiza el nombre, responsable y los <b>meses/fechas</b> programadas.</p>
+        
+        <div class="equipo-field" style="margin-top: 5px;">
+            <label>Cód. Tienda (Identificador)</label>
+            <input type="text" id="elCod" class="equipo-input" disabled style="background-color: #f1f5f9; cursor: not-allowed;" title="El código no se puede editar porque es el identificador único.">
+        </div>
+        <div class="equipo-field">
+            <label>Nombre Tienda</label>
+            <input type="text" id="elNombre" class="equipo-input">
+        </div>
+        <div class="equipo-field">
+            <label>Resp. Zonal</label>
+            <input type="text" id="elZonal" class="equipo-input">
+        </div>
+
+        <!-- GESTION DE MESES Y FECHAS -->
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border);">
+            <label style="font-weight: 700; color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; display: block; margin-bottom: 8px;">Meses y Fechas Programadas</label>
+            <div id="elListaMeses" style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; max-height: 200px; overflow-y: auto; padding-right: 5px;">
+                <!-- Aquí se renderizan los meses -->
+            </div>
+            <div style="display: flex; gap: 6px; align-items: center; background: #f1f5f9; padding: 10px; border-radius: 8px; border: 1px dashed #cbd5e1; flex-wrap: wrap;">
+                <input type="text" id="elNuevoMes" class="equipo-input" list="listaMesesExistentes" placeholder="Mes (Ej: MAYO 2026)" style="flex: 1; min-width: 130px; text-transform: uppercase;" onkeypress="if(event.key === 'Enter') window.agregarMesEditLocal()">
+                <input type="date" id="elNuevaFecha" class="equipo-input" style="width: 130px;" title="Fecha de ejecución (Opcional)">
+                <button class="btn-action" style="background: var(--success); padding: 6px 12px; font-size: 0.8rem;" onclick="window.agregarMesEditLocal()">+ Añadir</button>
+            </div>
+        </div>
+
+        <div class="modal-actions" style="margin-top: 20px;">
+            <button class="btn-modal btn-cancel" onclick="window.cerrarModalEditarLocal()">Cancelar</button>
+            <button id="btnGuardarEditLocal" class="btn-modal btn-save" onclick="window.guardarModalEditarLocal()">Guardar Cambios</button>
         </div>
     </div>
 </div>
@@ -543,23 +717,39 @@
     <option value="Juan Gonzalez">
 </datalist>
 
-<!-- MODAL GESTIÓN DE EQUIPOS DETALLADO -->
+<!-- MODAL GESTIÓN DE EQUIPOS (LISTA DE TARJETAS) -->
 <div id="equiposModal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 850px; width: 95%;">
-        <div class="modal-header">Gestión de Equipos - Local <span id="eqCodTiendaTitulo"></span></div>
+    <div class="modal-content" style="max-width: 700px; width: 95%;">
+        <div class="modal-header">Equipos en Local <span id="eqCodTiendaTitulo"></span></div>
         
         <div class="add-equipo-container">
-            <input type="text" id="nuevoEquipoInput" class="search-input" style="flex: 1; min-width: auto;" placeholder="Ej: Horno, Visicooler, Amasadora..." onkeypress="if(event.key === 'Enter') window.agregarEquipo()">
+            <input type="text" id="nuevoEquipoInput" class="search-input" style="flex: 1; min-width: auto;" placeholder="Escribe el nombre del equipo y presiona Enter..." onkeypress="if(event.key === 'Enter') window.agregarEquipo()">
             <button class="btn-add" onclick="window.agregarEquipo()">+ Agregar Equipo</button>
         </div>
 
         <div id="equiposContainer" class="equipos-list">
-            <!-- Las tarjetas de equipos se renderizan dinámicamente -->
+            <!-- Las tarjetas de equipos se renderizan dinámicamente aquí -->
         </div>
 
         <div class="modal-actions" style="margin-top: 20px;">
-            <button class="btn-modal btn-cancel" onclick="cerrarEquipos()">Cerrar</button>
-            <button id="btnGuardarEquipos" class="btn-modal btn-save" onclick="guardarEquipos()">Guardar Cambios</button>
+            <button class="btn-modal btn-cancel" onclick="cerrarEquipos()">Cancelar</button>
+            <button id="btnGuardarEquipos" class="btn-modal btn-save" onclick="guardarEquipos()">Guardar Todo en la Nube</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DETALLE DE UN EQUIPO ESPECÍFICO -->
+<div id="modalEquipoDetalle" class="modal-overlay">
+    <div class="modal-content" style="max-width: 800px; width: 95%;">
+        <div class="modal-header">Trabajar en Equipo 🔧</div>
+        
+        <div id="equipoDetalleContainer" style="margin-top: 15px;">
+            <!-- Contenido dinámico del equipo activo -->
+        </div>
+
+        <div class="modal-actions" style="margin-top: 20px; display: flex; justify-content: space-between;">
+            <button class="btn-remove" onclick="window.eliminarEquipoActivo()" title="Borrar este equipo de la lista de forma permanente">🗑️ Eliminar Equipo</button>
+            <button class="btn-modal btn-save" onclick="window.cerrarModalEquipoDetalle()">Aceptar y Volver</button>
         </div>
     </div>
 </div>
@@ -592,19 +782,42 @@
     window.dashItemsPorPagina = 50;
     window.cotDashContext = { codTienda: null, eqIndex: null, cIndex: null };
 
+    // --- FORMATEADOR PESO CHILENO (CLP) ---
+    window.formatearCLP = function(valor) {
+        if (valor === undefined || valor === null || valor === '' || valor === '-') return '-';
+        let numStr = valor.toString().replace(/\D/g, '');
+        if (!numStr) return valor; 
+        let num = parseInt(numStr, 10);
+        return '$' + num.toLocaleString('es-CL');
+    };
+
     // --- LÓGICA NAVEGACIÓN TABS ---
     window.cambiarVista = function(vista) {
+        document.getElementById('vistaPanel').style.display = 'none';
+        document.getElementById('vistaDashboard').style.display = 'none';
+        document.getElementById('vistaDashboardEquipos').style.display = 'none';
+        document.getElementById('vistaLocales').style.display = 'none';
+        
+        document.getElementById('tabBtnPanel').classList.remove('active');
+        document.getElementById('tabBtnDash').classList.remove('active');
+        document.getElementById('tabBtnEquipos').classList.remove('active');
+        document.getElementById('tabBtnLocales').classList.remove('active');
+
         if(vista === 'panel') {
             document.getElementById('vistaPanel').style.display = 'block';
-            document.getElementById('vistaDashboard').style.display = 'none';
             document.getElementById('tabBtnPanel').classList.add('active');
-            document.getElementById('tabBtnDash').classList.remove('active');
-        } else {
-            document.getElementById('vistaPanel').style.display = 'none';
+        } else if(vista === 'dashboard') {
             document.getElementById('vistaDashboard').style.display = 'block';
             document.getElementById('tabBtnDash').classList.add('active');
-            document.getElementById('tabBtnPanel').classList.remove('active');
             window.cargarDashboardCotizaciones(); 
+        } else if(vista === 'dashboardEquipos') {
+            document.getElementById('vistaDashboardEquipos').style.display = 'block';
+            document.getElementById('tabBtnEquipos').classList.add('active');
+            window.cargarDashboardEquipos(); 
+        } else if(vista === 'locales') {
+            document.getElementById('vistaLocales').style.display = 'block';
+            document.getElementById('tabBtnLocales').classList.add('active');
+            window.renderizarTablaLocales();
         }
     };
 
@@ -755,7 +968,7 @@
                 eqData.Equipos.forEach(eq => {
                     if (eq.listaCotizaciones) {
                         eq.listaCotizaciones.forEach(cot => {
-                            if (!cot.tieneOC && cot.numero && cot.numero.trim() !== '') {
+                            if (!cot.realizado && !cot.tieneOC && cot.numero && cot.numero.trim() !== '') {
                                 cotHTML += `<div style="margin-bottom:2px;">• ${cot.numero} <i>(${eq.nombre})</i></div>`;
                             }
                         });
@@ -888,9 +1101,13 @@
 
     function actualizarSelectorMeses(data) {
         const monthSelect = document.getElementById('monthSelect');
+        const datalistMeses = document.getElementById('listaMesesExistentes');
+        
         const mesesUnicos = [...new Set(data.map(row => row.MES).filter(Boolean))];
         
         monthSelect.innerHTML = '';
+        if(datalistMeses) datalistMeses.innerHTML = '';
+        
         if (mesesUnicos.length === 0) return;
 
         mesesUnicos.forEach(mes => {
@@ -898,6 +1115,12 @@
             option.value = mes;
             option.textContent = mes;
             monthSelect.appendChild(option);
+
+            if(datalistMeses) {
+                const optDL = document.createElement('option');
+                optDL.value = mes;
+                datalistMeses.appendChild(optDL);
+            }
         });
     }
 
@@ -1137,7 +1360,7 @@
     // --- LÓGICA DEL DASHBOARD DE COTIZACIONES ---
     window.cargarDashboardCotizaciones = async function() {
         const tbody = document.getElementById('dashTableBody');
-        tbody.innerHTML = '<tr><td colspan="15" class="centrado">Extrayendo datos de los equipos...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="16" class="centrado">Extrayendo datos de los equipos...</td></tr>';
 
         let mapTiendas = {};
         datosGlobales.forEach(row => {
@@ -1208,7 +1431,7 @@
 
         } catch(e) {
             console.error(e);
-            tbody.innerHTML = '<tr><td colspan="15" class="centrado empty-state" style="color: #ef4444;">Ocurrió un error al cargar el Dashboard.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="16" class="centrado empty-state" style="color: #ef4444;">Ocurrió un error al cargar el Dashboard.</td></tr>';
         }
     };
 
@@ -1250,7 +1473,7 @@
         tbody.innerHTML = '';
 
         if(window.dashDatosFiltrados.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="15" class="centrado empty-state">No hay cotizaciones para mostrar con este filtro.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="16" class="centrado empty-state">No hay cotizaciones para mostrar con este filtro.</td></tr>';
             document.getElementById('dashPagination').style.display = 'none';
             return;
         }
@@ -1274,6 +1497,10 @@
                         🔍 ${cot.numero}
                     </button>
                 </td>
+
+                <td style="font-weight: 600; font-size: 0.8rem; color: var(--primary); text-align: right;">
+                    ${window.formatearCLP(cot.monto)}
+                </td>
                 
                 <td>
                     <input type="text" class="equipo-input" style="padding: 4px; font-size: 0.75rem; width: 100%; box-sizing: border-box;" value="${cot.detalle}" placeholder="Repuestos..." onchange="window.actualizarCotizacionDesdeDash('${cot.codTienda}', ${cot.eqIndex}, ${cot.cIndex}, 'detalle', this.value)">
@@ -1291,7 +1518,6 @@
                 </td>
                 
                 <td>
-                    <!-- AQUÍ SE AGREGA EL BOTÓN PARA EL REQ DEL DASHBOARD PRINCIPAL -->
                     <div style="display: flex; gap: 2px;">
                         <input type="text" id="dash_req_${cot.codTienda}_${cot.eqIndex}_${cot.cIndex}" class="equipo-input" style="padding: 4px; font-size: 0.75rem; width: 100%; box-sizing: border-box;" value="${cot.reqInstalacion}" placeholder="N° Req." onchange="window.actualizarCotizacionDesdeDash('${cot.codTienda}', ${cot.eqIndex}, ${cot.cIndex}, 'reqInstalacion', this.value)">
                         <button class="btn-ficha-blue" style="padding: 4px 6px;" onclick="window.abrirFixeat('dash_req_${cot.codTienda}_${cot.eqIndex}_${cot.cIndex}')" title="Buscar en FIXEAT">🔗</button>
@@ -1440,11 +1666,14 @@
 
     // --- LÓGICA DE LA VENTANA DE EQUIPOS (MODAL GENERAL) ---
     window.equiposContext = { codTienda: null, mes: null, lista: [] };
-    window.equiposExpandedState = {}; 
+    window.equipoActivoIndex = -1;
+    window.cotizacionesExpandedState = {}; 
 
     window.abrirEquipos = async function(codTienda, mes) {
         window.equiposContext = { codTienda, mes, lista: [] };
-        window.equiposExpandedState = {}; 
+        window.equipoActivoIndex = -1;
+        window.cotizacionesExpandedState = {}; 
+        
         document.getElementById('eqCodTiendaTitulo').innerText = codTienda;
         document.getElementById('equiposContainer').innerHTML = '<div class="empty-state">Consultando base de datos...</div>';
         document.getElementById('equiposModal').style.display = 'flex';
@@ -1467,7 +1696,7 @@
             if (equiposBD) {
                 window.equiposContext.lista = equiposBD.map(eq => {
                     if (typeof eq === 'string') {
-                        return { nombre: eq, serie: '', observaciones: '', historial: [], listaCotizaciones: [] };
+                        return { nombre: eq, serie: '', observaciones: '', estado: 'Operativo', historial: [], listaCotizaciones: [] };
                     }
                     if (!eq.historial) eq.historial = []; 
                     if (!eq.listaCotizaciones) {
@@ -1481,7 +1710,14 @@
                             eq.cotizaciones = ''; 
                         }
                     }
-                    return eq; 
+                    return { 
+                        nombre: eq.nombre || (typeof eq === 'string' ? eq : ''), 
+                        serie: eq.serie || '', 
+                        observaciones: eq.observaciones || '', 
+                        estado: eq.estado || 'Operativo',
+                        historial: eq.historial || [], 
+                        listaCotizaciones: eq.listaCotizaciones || [] 
+                    };
                 });
             }
             window.renderizarEquipos();
@@ -1496,10 +1732,23 @@
         document.getElementById('nuevoEquipoInput').value = '';
     };
 
-    window.toggleEquipoDetalle = function(index, isOpen) {
-        window.equiposExpandedState[index] = isOpen;
+    // --- NUEVO: ABRIR MODAL DETALLE DE EQUIPO ESPECÍFICO ---
+    window.abrirModalEquipoDetalle = function(index) {
+        window.equipoActivoIndex = index;
+        window.renderizarEquipoDetalle();
+        document.getElementById('modalEquipoDetalle').style.display = 'flex';
     };
 
+    window.cerrarModalEquipoDetalle = function() {
+        document.getElementById('modalEquipoDetalle').style.display = 'none';
+        window.renderizarEquipos(); 
+    };
+
+    window.toggleCotizacionDetalle = function(cIndex, isOpen) {
+        window.cotizacionesExpandedState[`${window.equipoActivoIndex}_${cIndex}`] = isOpen;
+    };
+
+    // Renderiza la lista principal de botones de equipos
     window.renderizarEquipos = function() {
         const container = document.getElementById('equiposContainer');
         container.innerHTML = '';
@@ -1510,166 +1759,176 @@
         }
 
         window.equiposContext.lista.forEach((equipo, index) => {
-            const isOpen = window.equiposExpandedState[index] ? 'open' : '';
-
-            let historialHTML = '';
-            if (equipo.historial && equipo.historial.length > 0) {
-                equipo.historial.forEach((h, hIndex) => {
-                    historialHTML += `
-                        <div class="historial-item">
-                            <div class="historial-item-header">
-                                <span>📅 ${h.fecha} | 👷 ${h.tecnico}</span>
-                                <button class="btn-del-hist" onclick="window.eliminarRegistroHistorial(${index}, ${hIndex})">Eliminar</button>
-                            </div>
-                            <div>${h.detalle}</div>
-                        </div>
-                    `;
-                });
-            } else {
-                historialHTML = '<div style="font-size: 0.75rem; color: #94a3b8; font-style: italic;">Sin intervenciones registradas.</div>';
+            let badgeClass = equipo.estado === 'Fuera de Servicio' ? 'badge-fs' : (equipo.estado === 'Con observaciones' ? 'badge-obs' : 'badge-op');
+            
+            let cotPendientes = 0;
+            if (equipo.listaCotizaciones) {
+                cotPendientes = equipo.listaCotizaciones.filter(c => !c.realizado).length;
             }
 
-            let cotizacionesHTML = '';
-            if (equipo.listaCotizaciones && equipo.listaCotizaciones.length > 0) {
-                equipo.listaCotizaciones.forEach((cot, cIndex) => {
-                    cotizacionesHTML += `
-                        <div class="cot-item">
-                            <div class="cot-grid-info">
-                                <div style="display: flex; gap: 4px;">
-                                    <input type="text" id="eq_cot_${index}_${cIndex}" class="equipo-input" value="${cot.numero || ''}" placeholder="N° Cotización" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'numero', this.value)" style="flex: 1;">
-                                    <button class="btn-ficha-blue" style="padding: 4px 8px;" onclick="window.abrirFixeatCotizacion('eq_cot_${index}_${cIndex}')" title="Buscar Cotización en FIXEAT">🔗</button>
-                                </div>
-                                <input type="text" class="equipo-input" value="${cot.monto || ''}" placeholder="Monto ($)" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'monto', this.value)">
-                                <input type="date" class="equipo-input" value="${cot.fecha || ''}" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'fecha', this.value)" title="Fecha de emisión">
-                                <button class="btn-del-hist" onclick="window.eliminarCotizacion(${index}, ${cIndex})">Borrar</button>
+            const div = document.createElement('div');
+            div.className = 'equipo-card-btn';
+            div.onclick = () => window.abrirModalEquipoDetalle(index);
+
+            div.innerHTML = `
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <span>🔧 ${equipo.nombre}</span>
+                    <span class="badge ${badgeClass}">${equipo.estado || 'Operativo'}</span>
+                    ${cotPendientes > 0 ? `<span style="background:#f59e0b; color:white; font-size:0.65rem; padding:2px 6px; border-radius:10px;">${cotPendientes} Cot. Pend.</span>` : ''}
+                </div>
+                <span class="equipo-summary-icon">Editar / Ver ➡️</span>
+            `;
+            container.appendChild(div);
+        });
+    };
+
+    // Renderiza el contenido interno del modal del equipo específico
+    window.renderizarEquipoDetalle = function() {
+        const index = window.equipoActivoIndex;
+        if(index === -1 || !window.equiposContext.lista[index]) return;
+        
+        const equipo = window.equiposContext.lista[index];
+        const container = document.getElementById('equipoDetalleContainer');
+
+        // Historial
+        let historialHTML = '';
+        if (equipo.historial && equipo.historial.length > 0) {
+            equipo.historial.forEach((h, hIndex) => {
+                historialHTML += `
+                    <div class="historial-item">
+                        <div class="historial-item-header">
+                            <span>📅 ${h.fecha} | 👷 ${h.tecnico}</span>
+                            <button class="btn-del-hist" onclick="window.eliminarRegistroHistorial(${hIndex})">Eliminar</button>
+                        </div>
+                        <div>${h.detalle}</div>
+                    </div>
+                `;
+            });
+        } else {
+            historialHTML = '<div style="font-size: 0.75rem; color: #94a3b8; font-style: italic;">Sin intervenciones registradas.</div>';
+        }
+
+        // Cotizaciones (ahora son Acordeones y se omiten las realizadas)
+        let cotizacionesHTML = '';
+        let cotPendientes = 0;
+
+        if (equipo.listaCotizaciones && equipo.listaCotizaciones.length > 0) {
+            equipo.listaCotizaciones.forEach((cot, cIndex) => {
+                // Si la cotización ya está ejecutada, la saltamos para no mostrarla en este modal
+                if (cot.realizado) return; 
+
+                cotPendientes++;
+                const cotKey = `${index}_${cIndex}`;
+                const isCotOpen = window.cotizacionesExpandedState[cotKey] || (!cot.numero && !cot.monto) ? 'open' : '';
+                const mntoStr = window.formatearCLP(cot.monto);
+                
+                cotizacionesHTML += `
+                    <details class="cot-details" ${isCotOpen} ontoggle="window.toggleCotizacionDetalle(${cIndex}, this.open)">
+                        <summary>
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <span style="color:var(--primary);">📄 N° ${cot.numero || 'S/N'}</span>
+                                <span style="color:var(--secondary); font-weight:700;">${mntoStr !== '-' ? mntoStr : ''}</span>
+                                ${cot.tieneOC ? '<span class="badge badge-op" style="padding:2px 6px; font-size:0.65rem;">Con OC</span>' : '<span class="badge badge-obs" style="padding:2px 6px; font-size:0.65rem;">Pend. OC</span>'}
+                            </div>
+                            <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal;">Ver / Editar ▼</span>
+                        </summary>
+                        
+                        <div class="cot-details-content">
+                            <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+                                <button class="btn-del-hist" onclick="window.eliminarCotizacion(${cIndex})">🗑️ Borrar Cotización</button>
                             </div>
                             
-                            <!-- CAMPO DETALLE / REPUESTOS -->
+                            <div style="display: grid; grid-template-columns: 1fr 100px 130px; gap: 8px; align-items: center; margin-bottom: 8px;">
+                                <div style="display: flex; gap: 4px;">
+                                    <input type="text" class="equipo-input" value="${cot.numero || ''}" placeholder="N° Cotización" onchange="window.actualizarCotizacion(${cIndex}, 'numero', this.value); window.renderizarEquipoDetalle();" style="flex: 1;">
+                                    <button class="btn-ficha-blue" style="padding: 4px 8px;" onclick="window.abrirFixeatCotizacionValue('${cot.numero || ''}')" title="Buscar Cotización en FIXEAT">🔗</button>
+                                </div>
+                                <input type="text" class="equipo-input" value="${cot.monto || ''}" placeholder="Monto ($)" onchange="window.actualizarCotizacion(${cIndex}, 'monto', this.value); window.renderizarEquipoDetalle();">
+                                <input type="date" class="equipo-input" value="${cot.fecha || ''}" onchange="window.actualizarCotizacion(${cIndex}, 'fecha', this.value)" title="Fecha de emisión">
+                            </div>
+                            
                             <div style="margin-bottom: 8px;">
                                 <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">Repuestos u Observaciones</label>
-                                <input type="text" class="equipo-input" value="${cot.detalle || ''}" placeholder="Ej: Motor ventilador, termostato..." onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'detalle', this.value)" style="width: 100%;">
+                                <input type="text" class="equipo-input" value="${cot.detalle || ''}" placeholder="Ej: Motor ventilador, termostato..." onchange="window.actualizarCotizacion(${cIndex}, 'detalle', this.value)" style="width: 100%;">
                             </div>
                             
-                            <!-- CAMPOS TÉCNICOS Y FECHAS -->
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 8px; background: #ffffff; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px;">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 8px; background: #f8fafc; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px;">
+                                <div><label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">Técnico Asig.</label><input type="text" class="equipo-input" list="listaTecnicos" value="${cot.tecnicoAsignado || ''}" placeholder="Técnico..." onchange="window.actualizarCotizacion(${cIndex}, 'tecnicoAsignado', this.value)"></div>
+                                <div><label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">N° OC</label><input type="text" class="equipo-input" value="${cot.numeroOC || ''}" placeholder="Ej: OC-123" onchange="window.actualizarCotizacion(${cIndex}, 'numeroOC', this.value)"></div>
                                 <div>
-                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">Técnico Asig.</label>
-                                    <input type="text" class="equipo-input" list="listaTecnicos" value="${cot.tecnicoAsignado || ''}" placeholder="Técnico..." onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'tecnicoAsignado', this.value)">
-                                </div>
-                                <div>
-                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">N° OC</label>
-                                    <input type="text" class="equipo-input" value="${cot.numeroOC || ''}" placeholder="Ej: OC-123" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'numeroOC', this.value)">
-                                </div>
-                                
-                                <div>
-                                    <!-- AQUÍ SE AGREGA EL BOTÓN PARA EL REQ EN LA GESTIÓN DEL EQUIPO -->
                                     <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">N° Req. Instalación</label>
                                     <div style="display: flex; gap: 4px;">
-                                        <input type="text" id="eq_req_${index}_${cIndex}" class="equipo-input" value="${cot.reqInstalacion || ''}" placeholder="Ej: REQ-987" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'reqInstalacion', this.value)" style="flex: 1;">
-                                        <button class="btn-ficha-blue" style="padding: 4px 8px;" onclick="window.abrirFixeat('eq_req_${index}_${cIndex}')" title="Buscar en FIXEAT">🔗</button>
+                                        <input type="text" class="equipo-input" value="${cot.reqInstalacion || ''}" placeholder="Ej: REQ-987" onchange="window.actualizarCotizacion(${cIndex}, 'reqInstalacion', this.value)" style="flex: 1;">
+                                        <button class="btn-ficha-blue" style="padding: 4px 8px;" onclick="window.abrirFixeatValue('${cot.reqInstalacion || ''}')" title="Buscar en FIXEAT">🔗</button>
                                     </div>
                                 </div>
-
-                                <div>
-                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">N° Nota Venta (NV)</label>
-                                    <input type="text" class="equipo-input" value="${cot.numeroNV || ''}" placeholder="Ej: NV-001" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'numeroNV', this.value)">
-                                </div>
-                                <div>
-                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">Fecha Llegada OC</label>
-                                    <input type="date" class="equipo-input" value="${cot.fechaOC || ''}" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'fechaOC', this.value)">
-                                </div>
-                                <div>
-                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">Fecha Ejecución</label>
-                                    <input type="date" class="equipo-input" value="${cot.fechaEjecucion || ''}" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'fechaEjecucion', this.value)">
-                                </div>
-                                <div>
-                                    <label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">Fecha Facturación</label>
-                                    <input type="date" class="equipo-input" value="${cot.fechaFacturacion || ''}" onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'fechaFacturacion', this.value)">
-                                </div>
+                                <div><label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">N° Nota Venta (NV)</label><input type="text" class="equipo-input" value="${cot.numeroNV || ''}" placeholder="Ej: NV-001" onchange="window.actualizarCotizacion(${cIndex}, 'numeroNV', this.value)"></div>
+                                <div><label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">Fecha Llegada OC</label><input type="date" class="equipo-input" value="${cot.fechaOC || ''}" onchange="window.actualizarCotizacion(${cIndex}, 'fechaOC', this.value)"></div>
+                                <div><label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">Fecha Ejecución</label><input type="date" class="equipo-input" value="${cot.fechaEjecucion || ''}" onchange="window.actualizarCotizacion(${cIndex}, 'fechaEjecucion', this.value)"></div>
+                                <div><label style="font-size:0.7rem; color:var(--text-muted); font-weight:bold; display:block; margin-bottom:2px;">Fecha Facturación</label><input type="date" class="equipo-input" value="${cot.fechaFacturacion || ''}" onchange="window.actualizarCotizacion(${cIndex}, 'fechaFacturacion', this.value)"></div>
                             </div>
 
                             <div class="cot-grid-checks">
-                                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                                    <input type="checkbox" style="width:16px; height:16px; cursor:pointer;" ${cot.tieneOC ? 'checked' : ''} onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'tieneOC', this.checked)"> Tiene OC
-                                </label>
-                                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                                    <input type="checkbox" style="width:16px; height:16px; cursor:pointer;" ${cot.realizado ? 'checked' : ''} onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'realizado', this.checked)"> Ejecutado
-                                </label>
-                                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                                    <input type="checkbox" style="width:16px; height:16px; cursor:pointer;" ${cot.facturado ? 'checked' : ''} onchange="window.actualizarCotizacion(${index}, ${cIndex}, 'facturado', this.checked)"> Facturado
-                                </label>
+                                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" style="width:16px; height:16px; cursor:pointer;" ${cot.tieneOC ? 'checked' : ''} onchange="window.actualizarCotizacion(${cIndex}, 'tieneOC', this.checked); window.renderizarEquipoDetalle();"> Tiene OC</label>
+                                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" style="width:16px; height:16px; cursor:pointer;" ${cot.realizado ? 'checked' : ''} onchange="window.actualizarCotizacion(${cIndex}, 'realizado', this.checked); window.renderizarEquipoDetalle();"> Ejecutado</label>
+                                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" style="width:16px; height:16px; cursor:pointer;" ${cot.facturado ? 'checked' : ''} onchange="window.actualizarCotizacion(${cIndex}, 'facturado', this.checked)"> Facturado</label>
                             </div>
                         </div>
-                    `;
-                });
-            } else {
-                cotizacionesHTML = '<div style="font-size: 0.75rem; color: #94a3b8; font-style: italic;">No hay cotizaciones pendientes.</div>';
-            }
-
-            const detailsObj = document.createElement('details');
-            detailsObj.className = 'equipo-card';
-            if (isOpen) detailsObj.setAttribute('open', 'open');
-            
-            detailsObj.addEventListener('toggle', (e) => {
-                window.toggleEquipoDetalle(index, detailsObj.open);
+                    </details>
+                `;
             });
-            
-            detailsObj.innerHTML = `
-                <summary>
-                    <div style="display:flex; gap:10px; align-items:center;">
-                        <span>🔧 ${equipo.nombre}</span>
-                        ${equipo.listaCotizaciones && equipo.listaCotizaciones.length > 0 ? `<span style="background:#f59e0b; color:white; font-size:0.65rem; padding:2px 6px; border-radius:10px;">${equipo.listaCotizaciones.length} Cot.</span>` : ''}
-                    </div>
-                    <span class="equipo-summary-icon">▼</span>
-                </summary>
-                
-                <div class="equipo-content">
-                    <div class="equipo-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-                        <div class="equipo-field">
-                            <label>Nombre del Equipo</label>
-                            <input type="text" class="equipo-input" value="${equipo.nombre || ''}" onchange="window.actualizarCampoEquipo(${index}, 'nombre', this.value); window.renderizarEquipos();" placeholder="Ej: Horno, Visicooler...">
-                        </div>
+        }
+        
+        if (cotPendientes === 0) {
+            cotizacionesHTML = '<div style="font-size: 0.75rem; color: #94a3b8; font-style: italic;">No hay cotizaciones pendientes por ejecutar.</div>';
+        }
 
-                        <div class="equipo-field">
-                            <label>N° de Serie / Modelo</label>
-                            <input type="text" class="equipo-input" value="${equipo.serie || ''}" onchange="window.actualizarCampoEquipo(${index}, 'serie', this.value)" placeholder="Ej: SN-987654321">
-                        </div>
-                    </div>
-                    
-                    <div class="equipo-field" style="margin-top: 12px;">
-                        <label>Observaciones Generales</label>
-                        <textarea class="equipo-textarea" rows="2" onchange="window.actualizarCampoEquipo(${index}, 'observaciones', this.value)" placeholder="Estado físico del equipo, notas de precaución...">${equipo.observaciones || ''}</textarea>
-                    </div>
-                    
-                    <!-- SECCIÓN COTIZACIONES -->
-                    <div class="cot-section">
-                        <div class="historial-title">💰 Seguimiento de Cotizaciones</div>
-                        <div class="historial-list">
-                            ${cotizacionesHTML}
-                        </div>
-                        <button class="btn-add-hist" style="background: #10b981; margin-top:5px;" onclick="window.agregarCotizacion(${index})">+ Añadir Cotización</button>
-                    </div>
-
-                    <!-- SECCIÓN HISTORIAL -->
-                    <div class="historial-section">
-                        <div class="historial-title">📋 Bitácora de Mantenimiento</div>
-                        <div class="historial-list">
-                            ${historialHTML}
-                        </div>
-                        <div class="add-hist-grid">
-                            <input type="date" id="h_fecha_${index}" class="equipo-input">
-                            <input type="text" id="h_tecnico_${index}" class="equipo-input" list="listaTecnicos" placeholder="Técnico a cargo">
-                            <input type="text" id="h_detalle_${index}" class="equipo-input" placeholder="Detalle de intervención..." onkeypress="if(event.key === 'Enter') window.agregarRegistroHistorial(${index})">
-                            <button class="btn-add-hist" onclick="window.agregarRegistroHistorial(${index})">Registrar</button>
-                        </div>
-                    </div>
-
-                    <!-- BOTÓN ELIMINAR EQUIPO -->
-                    <button class="btn-remove" onclick="window.eliminarEquipo(${index})">🗑️ Eliminar Equipo Completo</button>
+        container.innerHTML = `
+            <div class="equipo-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                <div class="equipo-field">
+                    <label>Nombre del Equipo</label>
+                    <input type="text" class="equipo-input" value="${equipo.nombre || ''}" onchange="window.actualizarCampoEquipoActivo('nombre', this.value)" placeholder="Ej: Horno, Visicooler...">
                 </div>
-            `;
-            container.appendChild(detailsObj);
-        });
+                <div class="equipo-field">
+                    <label>N° de Serie / Modelo</label>
+                    <input type="text" class="equipo-input" value="${equipo.serie || ''}" onchange="window.actualizarCampoEquipoActivo('serie', this.value)" placeholder="Ej: SN-987654321">
+                </div>
+                <div class="equipo-field">
+                    <label>Estado del Equipo</label>
+                    <select class="equipo-input" onchange="window.actualizarCampoEquipoActivo('estado', this.value)">
+                        <option value="Operativo" ${equipo.estado === 'Operativo' ? 'selected' : ''}>🟢 Operativo</option>
+                        <option value="Con observaciones" ${equipo.estado === 'Con observaciones' ? 'selected' : ''}>🟡 Con observaciones</option>
+                        <option value="Fuera de Servicio" ${equipo.estado === 'Fuera de Servicio' ? 'selected' : ''}>🔴 Fuera de Servicio</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="equipo-field" style="margin-top: 12px;">
+                <label>Observaciones Generales</label>
+                <textarea class="equipo-textarea" rows="2" onchange="window.actualizarCampoEquipoActivo('observaciones', this.value)" placeholder="Estado físico del equipo, notas de precaución...">${equipo.observaciones || ''}</textarea>
+            </div>
+            
+            <div class="cot-section">
+                <div class="historial-title">💰 Seguimiento de Cotizaciones (Solo Pendientes)</div>
+                <div class="historial-list">
+                    ${cotizacionesHTML}
+                </div>
+                <button class="btn-add-hist" style="background: #10b981; margin-top:5px;" onclick="window.agregarCotizacion()">+ Añadir Cotización</button>
+            </div>
+
+            <div class="historial-section">
+                <div class="historial-title">📋 Bitácora de Mantenimiento</div>
+                <div class="historial-list">
+                    ${historialHTML}
+                </div>
+                <div class="add-hist-grid">
+                    <input type="date" id="h_fecha_activo" class="equipo-input">
+                    <input type="text" id="h_tecnico_activo" class="equipo-input" list="listaTecnicos" placeholder="Técnico a cargo">
+                    <input type="text" id="h_detalle_activo" class="equipo-input" placeholder="Detalle intervención..." onkeypress="if(event.key === 'Enter') window.agregarRegistroHistorial()">
+                    <button class="btn-add-hist" onclick="window.agregarRegistroHistorial()">Registrar</button>
+                </div>
+            </div>
+        `;
     };
 
     window.agregarEquipo = function() {
@@ -1681,32 +1940,32 @@
                 nombre: nuevoNombreEquipo,
                 serie: '',
                 observaciones: '',
+                estado: 'Operativo',
                 historial: [],
                 listaCotizaciones: []
             });
-            window.equiposExpandedState[0] = true; 
             input.value = '';
             input.focus();
             window.renderizarEquipos();
         }
     };
 
-    window.actualizarCampoEquipo = function(index, campo, valor) {
-        if (window.equiposContext.lista[index]) {
-            window.equiposContext.lista[index][campo] = valor;
+    window.actualizarCampoEquipoActivo = function(campo, valor) {
+        if (window.equipoActivoIndex !== -1) {
+            window.equiposContext.lista[window.equipoActivoIndex][campo] = valor;
         }
     };
 
-    window.eliminarEquipo = function(index) {
+    window.eliminarEquipoActivo = function() {
         if(confirm("ATENCIÓN: ¿Estás seguro que deseas eliminar este equipo, sus cotizaciones y todo su historial de forma permanente?")) {
-            window.equiposContext.lista.splice(index, 1);
-            window.equiposExpandedState[index] = false;
-            window.renderizarEquipos();
+            window.equiposContext.lista.splice(window.equipoActivoIndex, 1);
+            window.cerrarModalEquipoDetalle();
         }
     };
 
-    // --- Funciones de Cotizaciones ---
-    window.agregarCotizacion = function(eqIndex) {
+    // --- Funciones de Cotizaciones (Actúan sobre el equipo activo) ---
+    window.agregarCotizacion = function() {
+        const eqIndex = window.equipoActivoIndex;
         if (!window.equiposContext.lista[eqIndex].listaCotizaciones) {
             window.equiposContext.lista[eqIndex].listaCotizaciones = [];
         }
@@ -1715,26 +1974,29 @@
             reqInstalacion: '', numeroNV: '', fechaOC: '', fechaEjecucion: '', fechaFacturacion: '',
             tieneOC: false, realizado: false, facturado: false
         });
-        window.equiposExpandedState[eqIndex] = true; 
-        window.renderizarEquipos();
+        
+        const newCotIndex = window.equiposContext.lista[eqIndex].listaCotizaciones.length - 1;
+        window.cotizacionesExpandedState[`${eqIndex}_${newCotIndex}`] = true; 
+        
+        window.renderizarEquipoDetalle();
     };
 
-    window.actualizarCotizacion = function(eqIndex, cIndex, campo, valor) {
-        window.equiposContext.lista[eqIndex].listaCotizaciones[cIndex][campo] = valor;
+    window.actualizarCotizacion = function(cIndex, campo, valor) {
+        window.equiposContext.lista[window.equipoActivoIndex].listaCotizaciones[cIndex][campo] = valor;
     };
 
-    window.eliminarCotizacion = function(eqIndex, cIndex) {
+    window.eliminarCotizacion = function(cIndex) {
         if(confirm("¿Seguro que deseas borrar esta cotización?")) {
-            window.equiposContext.lista[eqIndex].listaCotizaciones.splice(cIndex, 1);
-            window.renderizarEquipos();
+            window.equiposContext.lista[window.equipoActivoIndex].listaCotizaciones.splice(cIndex, 1);
+            window.renderizarEquipoDetalle();
         }
     };
 
-    // --- Funciones del Historial ---
-    window.agregarRegistroHistorial = function(eqIndex) {
-        const inFecha = document.getElementById(`h_fecha_${eqIndex}`);
-        const inTecnico = document.getElementById(`h_tecnico_${eqIndex}`);
-        const inDetalle = document.getElementById(`h_detalle_${eqIndex}`);
+    // --- Funciones del Historial (Actúan sobre el equipo activo) ---
+    window.agregarRegistroHistorial = function() {
+        const inFecha = document.getElementById('h_fecha_activo');
+        const inTecnico = document.getElementById('h_tecnico_activo');
+        const inDetalle = document.getElementById('h_detalle_activo');
 
         if (!inFecha.value || !inDetalle.value.trim()) {
             alert("Para registrar en la bitácora, debes ingresar al menos la Fecha y el Detalle de la intervención.");
@@ -1743,23 +2005,23 @@
 
         const fechaInvertida = inFecha.value.split('-').reverse().join('-');
 
-        if (!window.equiposContext.lista[eqIndex].historial) {
-            window.equiposContext.lista[eqIndex].historial = [];
+        if (!window.equiposContext.lista[window.equipoActivoIndex].historial) {
+            window.equiposContext.lista[window.equipoActivoIndex].historial = [];
         }
 
-        window.equiposContext.lista[eqIndex].historial.unshift({
+        window.equiposContext.lista[window.equipoActivoIndex].historial.unshift({
             fecha: fechaInvertida,
             tecnico: inTecnico.value.trim() || 'Sin asignar',
             detalle: inDetalle.value.trim()
         });
 
-        window.renderizarEquipos(); 
+        window.renderizarEquipoDetalle(); 
     };
 
-    window.eliminarRegistroHistorial = function(eqIndex, hIndex) {
+    window.eliminarRegistroHistorial = function(hIndex) {
         if(confirm("¿Seguro que deseas borrar este registro de la bitácora?")) {
-            window.equiposContext.lista[eqIndex].historial.splice(hIndex, 1);
-            window.renderizarEquipos();
+            window.equiposContext.lista[window.equipoActivoIndex].historial.splice(hIndex, 1);
+            window.renderizarEquipoDetalle();
         }
     };
 
@@ -1779,11 +2041,14 @@
             if(document.getElementById('vistaDashboard').style.display === 'block') {
                 window.cargarDashboardCotizaciones();
             }
+            if(document.getElementById('vistaDashboardEquipos').style.display === 'block') {
+                window.cargarDashboardEquipos();
+            }
         } catch(error) {
             console.error("Error al guardar la lista de equipos:", error);
             alert("No se pudieron guardar los equipos. Revisa tu conexión a internet.");
         } finally {
-            btnGuardar.innerText = 'Guardar Cambios';
+            btnGuardar.innerText = 'Guardar Todo en la Nube';
             btnGuardar.disabled = false;
         }
     };
@@ -1847,31 +2112,751 @@
         }
     };
 
-    // --- LÓGICA PARA ABRIR REQ EN FIXEAT ---
+    // --- LÓGICA PARA ABRIR REQ/COT EN FIXEAT (Sobrecarga de funciones) ---
     window.abrirFixeat = function(inputId) {
         const reqInput = document.getElementById(inputId);
         const reqValue = reqInput ? reqInput.value.trim() : '';
-        
-        if (reqValue !== '') {
-            const url = "https://app.fixeat.cl/maquipan/services?tableSearch=" + encodeURIComponent(reqValue);
-            window.open(url, '_blank');
-        } else {
-            alert("Primero debes ingresar un número de REQ en la casilla.");
-            if (reqInput) reqInput.focus();
-        }
+        if (reqValue !== '') { window.abrirFixeatValue(reqValue); } 
+        else { alert("Primero debes ingresar un número de REQ."); if (reqInput) reqInput.focus(); }
+    };
+    window.abrirFixeatValue = function(reqValue) {
+        if (reqValue !== '') window.open("https://app.fixeat.cl/maquipan/services?tableSearch=" + encodeURIComponent(reqValue), '_blank');
     };
 
-    // --- LÓGICA PARA ABRIR COTIZACIÓN EN FIXEAT ---
     window.abrirFixeatCotizacion = function(inputId) {
         const cotInput = document.getElementById(inputId);
         const cotValue = cotInput ? cotInput.value.trim() : '';
+        if (cotValue !== '') { window.abrirFixeatCotizacionValue(cotValue); } 
+        else { alert("Primero debes ingresar un número de Cotización."); if (cotInput) cotInput.focus(); }
+    };
+    window.abrirFixeatCotizacionValue = function(cotValue) {
+        if (cotValue !== '') window.open("https://app.fixeat.cl/maquipan/quotes?tableSearch=" + encodeURIComponent(cotValue), '_blank');
+    };
+
+    // --- LÓGICA DEL DASHBOARD DE EQUIPOS ---
+    window.dashEqDatosGlobales = [];
+    window.dashEqDatosFiltrados = [];
+
+    window.cargarDashboardEquipos = async function() {
+        const tbody = document.getElementById('dashEqTableBody');
+        tbody.innerHTML = '<tr><td colspan="8" class="centrado">Consultando estado de equipos...</td></tr>';
+
+        // Mapear nombres de tiendas
+        let mapTiendas = {};
+        datosGlobales.forEach(row => {
+            if(row['CÓDIGO TIENDA'] && row['TIENDA']) {
+                mapTiendas[row['CÓDIGO TIENDA']] = row['TIENDA'];
+            }
+        });
+
+        let arrayEquipos = [];
+        let total = 0, operativos = 0, conObs = 0, fueraServicio = 0;
+
+        try {
+            const querySnapshot = await getDocs(collection(db, "equipos_locales"));
+            
+            querySnapshot.forEach(doc => {
+                const codTienda = doc.id;
+                const nombreTienda = mapTiendas[codTienda] || 'Sin Registro en Planificación';
+                const data = doc.data();
+
+                if(data.Equipos && data.Equipos.length > 0) {
+                    data.Equipos.forEach((eq) => {
+                        const estadoObj = eq.estado || 'Operativo';
+                        
+                        total++;
+                        if (estadoObj === 'Operativo') operativos++;
+                        else if (estadoObj === 'Con observaciones') conObs++;
+                        else if (estadoObj === 'Fuera de Servicio') fueraServicio++;
+
+                        // Preparar HTML de las cotizaciones para este equipo
+                        let cotizacionesHtml = '';
+                        if (eq.listaCotizaciones && eq.listaCotizaciones.length > 0) {
+                            eq.listaCotizaciones.forEach(cot => {
+                                if (cot.numero || cot.detalle || cot.monto) {
+                                    let ocBadge = cot.tieneOC ? '<span style="color:#047857; font-weight:700; font-size:0.7rem;">[Con OC]</span>' : '<span style="color:#b45309; font-weight:700; font-size:0.7rem;">[Pendiente OC]</span>';
+                                    let factBadge = cot.facturado ? '<span style="color:#4f46e5; font-weight:700; font-size:0.7rem;">[Facturado]</span>' : '';
+                                    let montoCLP = window.formatearCLP(cot.monto);
+                                    
+                                    cotizacionesHtml += `
+                                        <div style="margin-bottom:6px; font-size:0.75rem; background:#f8fafc; padding:6px; border-radius:6px; border:1px solid #e2e8f0; line-height:1.4;">
+                                            <div style="display:flex; justify-content:space-between; margin-bottom:2px;">
+                                                <strong>N° ${cot.numero || 'S/N'} <span style="color:var(--secondary); font-weight:600;">(${montoCLP})</span></strong>
+                                                <div>${ocBadge} ${factBadge}</div>
+                                            </div>
+                                            <div style="color:var(--text-muted);">${cot.detalle || '<i>Sin repuestos descritos</i>'}</div>
+                                        </div>
+                                    `;
+                                }
+                            });
+                        }
+
+                        arrayEquipos.push({
+                            codTienda,
+                            nombreTienda,
+                            equipo: eq.nombre || 'Sin nombre',
+                            serie: eq.serie || '-',
+                            estado: estadoObj,
+                            observaciones: eq.observaciones || '',
+                            cotizacionesHtml: cotizacionesHtml
+                        });
+                    });
+                }
+            });
+
+            // Actualizar KPIs
+            document.getElementById('kpiEqTotal').innerText = total;
+            document.getElementById('kpiEqOp').innerText = operativos;
+            document.getElementById('kpiEqObs').innerText = conObs;
+            document.getElementById('kpiEqFs').innerText = fueraServicio;
+
+            // Ordenar por tienda
+            arrayEquipos.sort((a,b) => a.codTienda.localeCompare(b.codTienda));
+            window.dashEqDatosGlobales = arrayEquipos;
+            window.filtrarDashboardEquipos(); 
+
+        } catch(e) {
+            console.error(e);
+            tbody.innerHTML = '<tr><td colspan="8" class="centrado empty-state" style="color: #ef4444;">Ocurrió un error al cargar los equipos.</td></tr>';
+        }
+    };
+
+    window.filtrarDashboardEquipos = function() {
+        const searchTerm = document.getElementById('dashEqSearchInput').value.toLowerCase();
+        const estadoFiltro = document.getElementById('dashEqStateFilter').value;
+
+        window.dashEqDatosFiltrados = window.dashEqDatosGlobales.filter(eq => {
+            let coincideTexto = true;
+            if (searchTerm !== '') {
+                const textoCompleto = `${eq.codTienda} ${eq.nombreTienda} ${eq.equipo} ${eq.serie} ${eq.observaciones} ${eq.cotizacionesHtml}`.toLowerCase();
+                coincideTexto = textoCompleto.includes(searchTerm);
+            }
+
+            let coincideEstado = (estadoFiltro === 'todos' || eq.estado === estadoFiltro);
+
+            return coincideTexto && coincideEstado;
+        });
         
-        if (cotValue !== '') {
-            const url = "https://app.fixeat.cl/maquipan/quotes?tableSearch=" + encodeURIComponent(cotValue);
-            window.open(url, '_blank');
-        } else {
-            alert("Primero debes ingresar un número de Cotización en la casilla.");
-            if (cotInput) cotInput.focus();
+        window.renderizarTablaDashboardEquipos();
+    };
+
+    window.renderizarTablaDashboardEquipos = function() {
+        const tbody = document.getElementById('dashEqTableBody');
+        tbody.innerHTML = '';
+
+        if(window.dashEqDatosFiltrados.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="centrado empty-state">No hay equipos que coincidan con este filtro.</td></tr>';
+            return;
+        }
+
+        window.dashEqDatosFiltrados.forEach(eq => {
+            let badgeClass = eq.estado === 'Fuera de Servicio' ? 'badge-fs' : (eq.estado === 'Con observaciones' ? 'badge-obs' : 'badge-op');
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="fw-bold" style="color: var(--primary); font-size: 0.8rem;">${eq.codTienda}</td>
+                <td style="font-size: 0.8rem; font-weight: 500;">${eq.nombreTienda}</td>
+                <td style="font-size: 0.8rem;">🔧 ${eq.equipo}</td>
+                <td style="font-size: 0.75rem; color: var(--text-muted);">${eq.serie}</td>
+                <td class="centrado">
+                    <span class="badge ${badgeClass}">${eq.estado}</span>
+                </td>
+                <td style="vertical-align: top;">
+                    ${eq.cotizacionesHtml || '<span style="font-style:italic; font-size:0.75rem; color:#94a3b8;">Sin cotizaciones</span>'}
+                </td>
+                <td style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.3; vertical-align: top;">
+                    ${eq.observaciones || '<span style="font-style:italic;">Sin observaciones</span>'}
+                </td>
+                <td class="centrado">
+                    <button class="btn-ficha-blue" onclick="window.abrirEquipos('${eq.codTienda}', document.getElementById('monthSelect').value || '')" title="Abrir y gestionar equipos de este local">
+                        🔧 Ver Local
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    };
+
+    // --- LÓGICA DE GESTIÓN DE LOCALES MANUALES ---
+    
+    function obtenerMesInteligente(mesBuscado) {
+        const mesesExistentes = [...new Set(datosGlobales.map(r => r.MES).filter(Boolean))];
+        const match = mesesExistentes.find(m => m.toLowerCase() === mesBuscado.toLowerCase());
+        return match ? match : mesBuscado;
+    }
+
+    window.agregarLocalManual = async function() {
+        let mes = document.getElementById('nlMes').value.trim();
+        const fecha = document.getElementById('nlFecha').value;
+        const cod = document.getElementById('nlCod').value.trim();
+        const nombre = document.getElementById('nlNombre').value.trim();
+        const zonal = document.getElementById('nlZonal').value.trim();
+
+        if(!mes || !cod || !nombre) {
+            alert("Los campos 'Mes Operativo', 'Cód. Tienda' y 'Nombre Tienda' son obligatorios.");
+            return;
+        }
+
+        mes = obtenerMesInteligente(mes); 
+
+        const existe = datosGlobales.find(r => r.MES === mes && r['CÓDIGO TIENDA'] === cod);
+        if(existe) {
+            alert("Ya existe un local registrado con ese código en ese mes.");
+            return;
+        }
+
+        let fechaStr = '';
+        if(fecha) {
+            fechaStr = fecha.split('-').reverse().join('-'); 
+        }
+
+        const nuevoRegistro = {
+            'MES': mes,
+            'FECHA INICIO': fechaStr,
+            'CÓDIGO TIENDA': cod,
+            'TIENDA': nombre,
+            'JEFE ZONAL': zonal
+        };
+
+        datosGlobales.push(nuevoRegistro);
+        
+        try {
+            await setDoc(doc(db, "sistema", "datosGlobales"), { excelJson: JSON.stringify(datosGlobales) });
+            alert("Local agregado exitosamente a la base de datos.");
+            
+            document.getElementById('nlCod').value = '';
+            document.getElementById('nlNombre').value = '';
+            
+            actualizarSelectorMeses(datosGlobales);
+            window.renderizarTablaLocales();
+            
+            if(document.getElementById('monthSelect').value === mes || document.getElementById('monthSelect').value === '') {
+                document.getElementById('monthSelect').value = mes;
+                procesarDatos(); 
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Error de red al guardar en la nube.");
+            datosGlobales.pop(); 
+        }
+    };
+
+    window.renderizarTablaLocales = function() {
+        const tbody = document.getElementById('tbodyLocalesMain');
+        const term = document.getElementById('searchLocales').value.toLowerCase();
+        tbody.innerHTML = '';
+        
+        if(datosGlobales.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No hay locales registrados en el sistema global. Sube un Excel o añade uno manualmente.</td></tr>';
+            return;
+        }
+
+        let datos = [...datosGlobales].reverse();
+        
+        if(term !== '') {
+            datos = datos.filter(r => 
+                (r.MES || '').toLowerCase().includes(term) ||
+                (r['CÓDIGO TIENDA'] || '').toLowerCase().includes(term) ||
+                (r['TIENDA'] || '').toLowerCase().includes(term) ||
+                (r['JEFE ZONAL'] || '').toLowerCase().includes(term)
+            );
+        }
+
+        if(datos.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No se encontraron resultados para tu búsqueda.</td></tr>';
+            return;
+        }
+
+        // AGRUPAR LOCALES POR CÓDIGO
+        let mapLocales = {};
+        datos.forEach(row => {
+            let cod = row['CÓDIGO TIENDA'];
+            if(!cod) return;
+            if(!mapLocales[cod]) {
+                mapLocales[cod] = {
+                    codTienda: cod,
+                    nombreTienda: row['TIENDA'] || '',
+                    jefeZonal: row['JEFE ZONAL'] || '',
+                    meses: new Set()
+                };
+            }
+            if(row.MES) mapLocales[cod].meses.add(row.MES);
+        });
+
+        let datosAgrupados = Object.values(mapLocales);
+
+        datosAgrupados.forEach((row) => {
+            const tr = document.createElement('tr');
+            
+            let mesesHtml = Array.from(row.meses).map(m => `<span class="badge" style="background:#e0e7ff; color:#3730a3; border:1px solid #c7d2fe; margin:2px;">${m}</span>`).join('');
+
+            tr.innerHTML = `
+                <td class="fw-bold" style="color:var(--primary); font-size: 0.85rem;">${row.codTienda}</td>
+                <td style="font-size: 0.85rem;">${row.nombreTienda}</td>
+                <td style="font-size: 0.85rem;">${row.jefeZonal}</td>
+                <td><div style="display:flex; flex-wrap:wrap; gap:4px;">${mesesHtml}</div></td>
+                <td class="centrado">
+                    <div style="display:flex; gap:4px; justify-content:center;">
+                        <button class="btn-ficha" style="color:var(--secondary); padding:4px 8px; font-size:0.75rem;" onclick="window.abrirModalEditarLocal('${row.codTienda}')" title="Editar Nombre, Zonal y Meses">✏️ Editar</button>
+                        <button class="btn-equipos" style="padding:4px 8px; font-size:0.75rem;" onclick="window.abrirEquipos('${row.codTienda}', document.getElementById('monthSelect').value || '')" title="Ver equipos del local">🔧 Equipos</button>
+                        <button class="btn-ficha" style="color:#10b981; background-color: #d1fae5; border: 1px solid #10b981; padding:4px 8px; font-size:0.75rem;" onclick="window.generarInformePDF('${row.codTienda}', '${row.nombreTienda}', '${row.jefeZonal}')" title="Descargar informe completo del local en PDF">📄 PDF</button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    };
+
+    window.eliminarLocalGlobal = async function(cod) {
+        if(confirm(`ATENCIÓN:\n¿Estás seguro que deseas eliminar el local ${cod} de TODOS los meses programados en la planificación global?\n\n(Esto lo quitará de la vista principal y dashboards).`)) {
+            
+            const originalLength = datosGlobales.length;
+            datosGlobales = datosGlobales.filter(r => r['CÓDIGO TIENDA'] !== cod);
+            
+            if(originalLength !== datosGlobales.length) {
+                try {
+                    await setDoc(doc(db, "sistema", "datosGlobales"), { excelJson: JSON.stringify(datosGlobales) });
+                    actualizarSelectorMeses(datosGlobales);
+                    window.renderizarTablaLocales();
+                    procesarDatos(); 
+                    if(document.getElementById('vistaDashboard').style.display === 'block') window.cargarDashboardCotizaciones();
+                    if(document.getElementById('vistaDashboardEquipos').style.display === 'block') window.cargarDashboardEquipos();
+                } catch (error) {
+                    console.error(error);
+                    alert("Hubo un error de conexión al intentar borrar el local.");
+                }
+            }
+        }
+    };
+
+    // --- LÓGICA DE EDICIÓN DE LOCALES (MODAL MEJORADO CON MESES) ---
+    window.localEditContext = { cod: null, meses: [] };
+
+    window.abrirModalEditarLocal = function(cod) {
+        window.localEditContext.cod = cod; 
+        
+        const records = datosGlobales.filter(r => r['CÓDIGO TIENDA'] === cod);
+        if(records.length > 0) {
+            document.getElementById('elCod').value = cod;
+            document.getElementById('elNombre').value = records[0]['TIENDA'] || '';
+            document.getElementById('elZonal').value = records[0]['JEFE ZONAL'] || '';
+            
+            window.localEditContext.meses = records.map(r => {
+                let fechaInput = '';
+                if(r['FECHA INICIO'] && r['FECHA INICIO'].includes('-')) {
+                    const parts = r['FECHA INICIO'].split('-');
+                    if(parts[0].length === 2 && parts[2].length === 4) {
+                        fechaInput = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                    } else if(parts[0].length === 4) {
+                        fechaInput = r['FECHA INICIO'];
+                    }
+                }
+                return { mes: r.MES, fechaInicio: fechaInput };
+            });
+
+            window.renderizarMesesEditLocal();
+            document.getElementById('modalEditLocal').style.display = 'flex';
+        }
+    };
+
+    window.cerrarModalEditarLocal = function() {
+        document.getElementById('modalEditLocal').style.display = 'none';
+        document.getElementById('elNuevoMes').value = '';
+        if(document.getElementById('elNuevaFecha')) document.getElementById('elNuevaFecha').value = '';
+    };
+
+    window.actualizarFechaMesLocal = function(index, nuevaFecha) {
+        window.localEditContext.meses[index].fechaInicio = nuevaFecha;
+    };
+
+    window.renderizarMesesEditLocal = function() {
+        const container = document.getElementById('elListaMeses');
+        container.innerHTML = '';
+        if (window.localEditContext.meses.length === 0) {
+            container.innerHTML = '<span style="font-size:0.8rem; color:#ef4444; font-weight:bold;">⚠️ El local se borrará por completo si guardas sin ningún mes asignado.</span>';
+            return;
+        }
+        window.localEditContext.meses.forEach((m, index) => {
+            container.innerHTML += `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; padding:8px 10px; border-radius:6px; border:1px solid #cbd5e1; gap: 10px;">
+                    <span style="font-size:0.85rem; font-weight:600; color:var(--primary); flex: 1;">${m.mes}</span>
+                    <input type="date" class="equipo-input" style="padding: 4px 8px; width: 130px;" value="${m.fechaInicio}" onchange="window.actualizarFechaMesLocal(${index}, this.value)" title="Fecha programada">
+                    <button class="btn-del-hist" onclick="window.eliminarMesEditLocal(${index})" title="Quitar este mes">🗑️ Quitar</button>
+                </div>
+            `;
+        });
+    };
+
+    window.agregarMesEditLocal = function() {
+        let nuevoMes = document.getElementById('elNuevoMes').value.trim();
+        let nuevaFecha = document.getElementById('elNuevaFecha').value; 
+
+        if (!nuevoMes) {
+            alert("Ingresa un nombre de mes.");
+            return;
+        }
+
+        nuevoMes = obtenerMesInteligente(nuevoMes).toUpperCase();
+
+        if (window.localEditContext.meses.some(m => m.mes.toUpperCase() === nuevoMes)) {
+            alert(`El mes ${nuevoMes} ya está asignado a este local.`);
+            return;
+        }
+
+        window.localEditContext.meses.push({ mes: nuevoMes, fechaInicio: nuevaFecha });
+        document.getElementById('elNuevoMes').value = '';
+        document.getElementById('elNuevaFecha').value = '';
+        window.renderizarMesesEditLocal();
+    };
+
+    window.eliminarMesEditLocal = function(index) {
+        window.localEditContext.meses.splice(index, 1);
+        window.renderizarMesesEditLocal();
+    };
+
+    window.guardarModalEditarLocal = async function() {
+        const cod = window.localEditContext.cod;
+        if(!cod) return;
+
+        const nombre = document.getElementById('elNombre').value.trim();
+        const zonal = document.getElementById('elZonal').value.trim();
+
+        if(!nombre) {
+            alert("El Nombre de la Tienda es obligatorio.");
+            return;
+        }
+
+        const btn = document.getElementById('btnGuardarEditLocal');
+        btn.innerText = "Guardando...";
+        btn.disabled = true;
+
+        datosGlobales = datosGlobales.filter(r => r['CÓDIGO TIENDA'] !== cod);
+
+        window.localEditContext.meses.forEach(m => {
+            let fechaStr = '';
+            if(m.fechaInicio) {
+                fechaStr = m.fechaInicio.split('-').reverse().join('-');
+            }
+
+            datosGlobales.push({
+                'MES': m.mes,
+                'FECHA INICIO': fechaStr,
+                'CÓDIGO TIENDA': cod,
+                'TIENDA': nombre,
+                'JEFE ZONAL': zonal
+            });
+        });
+
+        try {
+            await setDoc(doc(db, "sistema", "datosGlobales"), { excelJson: JSON.stringify(datosGlobales) });
+            window.cerrarModalEditarLocal();
+            actualizarSelectorMeses(datosGlobales);
+            window.renderizarTablaLocales();
+            procesarDatos();
+        } catch (error) {
+            console.error(error);
+            alert("Error al actualizar la información en la nube.");
+        } finally {
+            btn.innerText = "Guardar Cambios";
+            btn.disabled = false;
+        }
+    };
+    
+    // --- EXPORTACIÓN A EXCEL CON ESTILOS PROFESIONALES ---
+    window.exportarExcelCotizaciones = function() {
+        if (!window.dashDatosFiltrados || window.dashDatosFiltrados.length === 0) {
+            alert("No hay datos para exportar. Ajusta los filtros e intenta de nuevo.");
+            return;
+        }
+
+        const dataParaExcel = window.dashDatosFiltrados.map(cot => ({
+            "Cód. Local": cot.codTienda,
+            "Nombre Tienda": cot.nombreTienda,
+            "Equipo": cot.equipo,
+            "N° Cotización": cot.numero !== 'S/N' ? cot.numero : '',
+            "Monto": cot.monto !== '-' ? cot.monto : '',
+            "Repuestos / Obs.": cot.detalle,
+            "Técnico Asig.": cot.tecnicoAsignado,
+            "Tiene OC": cot.tieneOC ? "Sí" : "No",
+            "N° OC": cot.numeroOC,
+            "N° Req. Instalación": cot.reqInstalacion,
+            "N° NV": cot.numeroNV,
+            "Fecha OC": cot.fechaOC,
+            "Fecha Ejecución": cot.fechaEjecucion,
+            "Ejecutado": cot.realizado ? "Sí" : "No",
+            "Facturado": cot.facturado ? "Sí" : "No",
+            "Fecha Facturación": cot.fechaFacturacion
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(dataParaExcel);
+
+        // 1. Configurar ancho de columnas
+        const colWidths = [
+            { wch: 12 }, { wch: 30 }, { wch: 22 }, { wch: 15 }, 
+            { wch: 15 }, { wch: 40 }, { wch: 20 }, { wch: 12 }, 
+            { wch: 15 }, { wch: 20 }, { wch: 15 }, { wch: 15 }, 
+            { wch: 18 }, { wch: 12 }, { wch: 12 }, { wch: 18 }
+        ];
+        ws['!cols'] = colWidths;
+
+        // 2. Aplicar estilos celda por celda
+        const range = XLSX.utils.decode_range(ws['!ref']);
+        for (let R = range.s.r; R <= range.e.r; ++R) {
+            for (let C = range.s.c; C <= range.e.c; ++C) {
+                const cellAddress = XLSX.utils.encode_cell({r: R, c: C});
+                if (!ws[cellAddress]) continue;
+
+                // Estilo base
+                let cellStyle = {
+                    font: { name: "Arial", sz: 10 },
+                    border: {
+                        top: { style: "thin", color: { rgb: "CBD5E1" } },
+                        bottom: { style: "thin", color: { rgb: "CBD5E1" } },
+                        left: { style: "thin", color: { rgb: "CBD5E1" } },
+                        right: { style: "thin", color: { rgb: "CBD5E1" } }
+                    },
+                    alignment: { vertical: "center", wrapText: true }
+                };
+
+                // Estilo Encabezado vs Datos
+                if (R === 0) {
+                    cellStyle.fill = { fgColor: { rgb: "0F172A" } }; // Fondo azul oscuro
+                    cellStyle.font = { name: "Arial", sz: 11, bold: true, color: { rgb: "FFFFFF" } };
+                    cellStyle.alignment = { horizontal: "center", vertical: "center", wrapText: true };
+                } else {
+                    if (R % 2 !== 0) cellStyle.fill = { fgColor: { rgb: "F1F5F9" } }; // Fila intercalada
+                    
+                    // Centrar columnas específicas (Ej: Códigos, Fechas, Checks)
+                    if ([0, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15].includes(C)) {
+                        cellStyle.alignment.horizontal = "center";
+                    }
+                }
+                ws[cellAddress].s = cellStyle;
+            }
+        }
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Cotizaciones");
+        XLSX.writeFile(wb, "Reporte_Cotizaciones.xlsx");
+    };
+
+    window.exportarExcelEquipos = function() {
+        if (!window.dashEqDatosFiltrados || window.dashEqDatosFiltrados.length === 0) {
+            alert("No hay datos de equipos para exportar.");
+            return;
+        }
+
+        const dataParaExcel = window.dashEqDatosFiltrados.map(eq => ({
+            "Cód. Local": eq.codTienda,
+            "Nombre Tienda": eq.nombreTienda,
+            "Equipo": eq.equipo,
+            "N° Serie": eq.serie,
+            "Estado Actual": eq.estado,
+            "Observaciones": eq.observaciones
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(dataParaExcel);
+
+        // 1. Configurar ancho de columnas
+        const colWidths = [
+            { wch: 12 }, { wch: 35 }, { wch: 25 }, 
+            { wch: 20 }, { wch: 20 }, { wch: 60 }
+        ];
+        ws['!cols'] = colWidths;
+
+        // 2. Aplicar estilos celda por celda
+        const range = XLSX.utils.decode_range(ws['!ref']);
+        for (let R = range.s.r; R <= range.e.r; ++R) {
+            for (let C = range.s.c; C <= range.e.c; ++C) {
+                const cellAddress = XLSX.utils.encode_cell({r: R, c: C});
+                if (!ws[cellAddress]) continue;
+
+                let cellStyle = {
+                    font: { name: "Arial", sz: 10 },
+                    border: {
+                        top: { style: "thin", color: { rgb: "CBD5E1" } },
+                        bottom: { style: "thin", color: { rgb: "CBD5E1" } },
+                        left: { style: "thin", color: { rgb: "CBD5E1" } },
+                        right: { style: "thin", color: { rgb: "CBD5E1" } }
+                    },
+                    alignment: { vertical: "center", wrapText: true }
+                };
+
+                if (R === 0) {
+                    cellStyle.fill = { fgColor: { rgb: "0F172A" } };
+                    cellStyle.font = { name: "Arial", sz: 11, bold: true, color: { rgb: "FFFFFF" } };
+                    cellStyle.alignment = { horizontal: "center", vertical: "center", wrapText: true };
+                } else {
+                    if (R % 2 !== 0) cellStyle.fill = { fgColor: { rgb: "F1F5F9" } };
+                    
+                    // Lógica para dar color al estado del equipo
+                    if (C === 4) {
+                        cellStyle.alignment.horizontal = "center";
+                        cellStyle.font.bold = true;
+                        if (ws[cellAddress].v === "Operativo") cellStyle.font.color = { rgb: "047857" };
+                        else if (ws[cellAddress].v === "Con observaciones") cellStyle.font.color = { rgb: "B45309" };
+                        else if (ws[cellAddress].v === "Fuera de Servicio") cellStyle.font.color = { rgb: "B91C1C" };
+                    }
+                    if (C === 0 || C === 3) cellStyle.alignment.horizontal = "center";
+                }
+                ws[cellAddress].s = cellStyle;
+            }
+        }
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Estado_Equipos");
+        XLSX.writeFile(wb, "Reporte_Estado_Equipos.xlsx");
+    };
+
+    // --- GENERACIÓN DE INFORME PDF POR LOCAL ---
+    window.generarInformePDF = async function(codTienda, nombreTienda, jefeZonal) {
+        try {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+
+            // Colores corporativos (basados en tu UI)
+            const colorPrimario = [15, 23, 42];    // #0f172a
+            const colorFondoHead = [59, 130, 246]; // #3b82f6
+
+            // --- CABECERA DEL INFORME ---
+            pdf.setFontSize(18);
+            pdf.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2]);
+            pdf.setFont("helvetica", "bold");
+            pdf.text("INFORME TÉCNICO DE MANTENIMIENTO", 14, 22);
+
+            pdf.setFontSize(10);
+            pdf.setFont("helvetica", "normal");
+            pdf.setTextColor(100, 116, 139); // Gris muteado
+            pdf.text("Generado por: Supervisión Técnica Nacional", 14, 30);
+            pdf.text(`Fecha de emisión: ${new Date().toLocaleDateString('es-CL')}`, 14, 35);
+
+            // Línea separadora
+            pdf.setDrawColor(226, 232, 240);
+            pdf.line(14, 40, 196, 40); 
+
+            // --- DATOS DEL LOCAL ---
+            pdf.setFontSize(12);
+            pdf.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2]);
+            pdf.setFont("helvetica", "bold");
+            pdf.text("Información de la Sucursal", 14, 50);
+            
+            pdf.setFontSize(10);
+            pdf.setFont("helvetica", "normal");
+            pdf.setTextColor(51, 65, 85);
+            pdf.text(`Código de Tienda: ${codTienda}`, 14, 57);
+            pdf.text(`Nombre de Tienda: ${nombreTienda}`, 14, 63);
+            pdf.text(`Responsable Zonal: ${jefeZonal}`, 14, 69);
+
+            // --- EXTRACCIÓN DE DATOS DE EQUIPOS Y COTIZACIONES ---
+            const docRef = doc(db, "equipos_locales", codTienda);
+            const docSnap = await getDoc(docRef);
+            let tablaEquipos = [];
+
+            if (docSnap.exists() && docSnap.data().Equipos) {
+                const equiposData = docSnap.data().Equipos;
+                equiposData.forEach(eq => {
+                    
+                    // 1. Construir el texto agrupado de las cotizaciones para este equipo
+                    let cotizacionesText = '';
+                    if (eq.listaCotizaciones && eq.listaCotizaciones.length > 0) {
+                        eq.listaCotizaciones.forEach(cot => {
+                            
+                            // NUEVA REGLA: Si la cotización está facturada, la omitimos del PDF
+                            if (cot.facturado) return; 
+
+                            if (cot.numero || cot.detalle || cot.monto) {
+                                let numStr = cot.numero || 'S/N';
+                                let montoStr = (cot.monto && cot.monto !== '-') ? window.formatearCLP(cot.monto) : '';
+                                
+                                // Determinar el estado de la cotización
+                                let estadoCot = "Pendiente OC";
+                                if (cot.realizado) estadoCot = "Ejecutado";
+                                else if (cot.tieneOC) estadoCot = "Con OC";
+                                
+                                cotizacionesText += `• Cot. N° ${numStr} ${montoStr ? '('+montoStr+')' : ''} [${estadoCot}]\n  Repuestos: ${cot.detalle || 'Sin detalle'}\n\n`;
+                            }
+                        });
+                    }
+                    
+                    // Si no hay texto (ya sea porque no hay cotizaciones o porque todas están facturadas)
+                    if (cotizacionesText.trim() === '') {
+                        cotizacionesText = 'Sin cotizaciones pendientes o en ejecución.';
+                    }
+
+                    // 2. Empujar la fila con la nueva columna
+                    tablaEquipos.push([
+                        eq.nombre || 'S/N',
+                        eq.serie || '-',
+                        eq.estado || 'Operativo',
+                        eq.observaciones || 'Sin observaciones',
+                        cotizacionesText.trim()
+                    ]);
+                });
+            }
+
+            // Si el local no tiene equipos
+            if (tablaEquipos.length === 0) {
+                tablaEquipos.push(["No hay equipos registrados en plataforma", "-", "-", "-", "-"]);
+            }
+
+            // --- GENERACIÓN DE TABLA AUTO-ESTILIZADA ---
+            pdf.autoTable({
+                startY: 77,
+                head: [['Equipo / Máquina', 'N° Serie', 'Estado Actual', 'Observaciones', 'Cotizaciones Pendientes / Ejecutadas']],
+                body: tablaEquipos,
+                theme: 'grid',
+                headStyles: { 
+                    fillColor: colorFondoHead, 
+                    textColor: 255, 
+                    fontSize: 9,
+                    fontStyle: 'bold',
+                    halign: 'center'
+                },
+                bodyStyles: { fontSize: 8, textColor: [51, 65, 85], valign: 'middle' },
+                alternateRowStyles: { fillColor: [248, 250, 252] }, 
+                columnStyles: {
+                    0: { cellWidth: 28, fontStyle: 'bold' },
+                    1: { cellWidth: 25, halign: 'center' },
+                    2: { cellWidth: 25, halign: 'center', fontStyle: 'bold' },
+                    3: { cellWidth: 40 },
+                    4: { cellWidth: 'auto' } 
+                },
+                didParseCell: function (data) {
+                    // Colorear el texto de la celda de ESTADO dinámicamente
+                    if (data.section === 'body' && data.column.index === 2) {
+                        const estado = data.cell.raw;
+                        if (estado === 'Operativo') {
+                            data.cell.styles.textColor = [16, 185, 129]; // Verde éxito
+                        } else if (estado === 'Con observaciones') {
+                            data.cell.styles.textColor = [217, 119, 6]; // Naranja advertencia
+                        } else if (estado === 'Fuera de Servicio') {
+                            data.cell.styles.textColor = [239, 68, 68]; // Rojo peligro
+                        }
+                    }
+                }
+            });
+
+            // --- PIE DE PÁGINA CON NUMERACIÓN ---
+            const pageCount = pdf.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                pdf.setPage(i);
+                pdf.setFontSize(8);
+                pdf.setTextColor(148, 163, 184);
+                
+                // Texto centrado en el pie
+                const textoPie = `Página ${i} de ${pageCount} - Documento de uso interno y para el cliente.`;
+                const textWidth = pdf.getStringUnitWidth(textoPie) * pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+                const textOffset = (pdf.internal.pageSize.getWidth() - textWidth) / 2;
+                
+                pdf.text(textoPie, textOffset, pdf.internal.pageSize.getHeight() - 10);
+            }
+
+            // Descargar el archivo al PC del usuario
+            pdf.save(`Informe_Tecnico_${codTienda}_${nombreTienda.replace(/\s+/g, '_')}.pdf`);
+            
+        } catch (error) {
+            console.error("Error al generar PDF:", error);
+            alert("Hubo un error al compilar el informe. Revisa tu conexión a internet.");
         }
     };
 </script>
