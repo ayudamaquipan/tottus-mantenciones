@@ -1212,11 +1212,22 @@
 
             let cotPendientesHTML = '';
             if (equiposMap[codTienda] && equiposMap[codTienda].Equipos) {
-                equiposMap[codTienda].Equipos.forEach(eq => {
+                // Añadimos eqIdx para generar un ID único
+                equiposMap[codTienda].Equipos.forEach((eq, eqIdx) => {
                     if (eq.listaCotizaciones) {
-                        eq.listaCotizaciones.forEach(cot => {
+                        // Añadimos cotIdx para generar un ID único
+                        eq.listaCotizaciones.forEach((cot, cotIdx) => {
                             if (!cot.tieneOC && cot.numero && cot.numero.trim() !== '') {
-                                cotPendientesHTML += `<div style="margin-bottom:2px; font-weight:600;">• ${cot.numero} <span style="font-weight:400; font-style:italic;">(${eq.nombre})</span></div>`;
+                                // Creamos un ID oculto para que la función abrirFixeatCotizacion lo pueda leer
+                                const idUnico = `pend_cot_${codTienda}_${eqIdx}_${cotIdx}`;
+                                
+                                cotPendientesHTML += `
+                                <div style="margin-bottom:4px; font-weight:600; display:flex; align-items:center; gap:4px; flex-wrap:wrap;">
+                                    <span>• ${cot.numero}</span>
+                                    <input type="hidden" id="${idUnico}" value="${cot.numero}">
+                                    <button class="btn-ficha-blue" style="padding: 2px 6px; font-size: 0.7rem;" onclick="window.abrirFixeatCotizacion('${idUnico}')" title="Buscar Cotización en FIXEAT">🔗</button>
+                                    <span style="font-weight:400; font-style:italic;">(${eq.nombre})</span>
+                                </div>`;
                             }
                         });
                     }
@@ -1248,7 +1259,10 @@
                     <div id="equipos_cot_${codTienda}" style="font-size: 0.75rem; color: #b45309; background: #fef3c7; border: 1px solid #fde68a; border-radius: 4px; padding: 4px; margin-bottom: 4px; display: ${displayCotStyle}; text-align: left; line-height: 1.2; max-height: 80px; overflow-y: auto;">
                         ${cotPendientesHTML}
                     </div>
-                    <textarea id="cot_${codTienda}" class="input-manual" rows="1" style="width: 100%;" onchange="window.guardarCampoManual(this, 'NumCot', '${codTienda}', '${mesSeleccionado}')" placeholder="Otras cotiz..."></textarea>
+                    <div style="display: flex; gap: 4px; align-items: center;">
+                        <textarea id="cot_${codTienda}" class="input-manual" rows="1" style="width: 100%;" onchange="window.guardarCampoManual(this, 'NumCot', '${codTienda}', '${mesSeleccionado}')" placeholder="Otras cotiz..."></textarea>
+                        <button class="btn-ficha-blue" style="padding: 6px 8px; height: 32px; font-size: 0.9rem;" onclick="window.abrirFixeatCotizacion('cot_${codTienda}')" title="Buscar Cotización en FIXEAT">🔗</button>
+                    </div>
                 </td>
                 <td>
                     <textarea id="obs_${codTienda}" class="input-manual input-obs" rows="1" onchange="window.guardarCampoManual(this, 'Observaciones', '${codTienda}', '${mesSeleccionado}')"></textarea>
